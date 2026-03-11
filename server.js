@@ -1,6 +1,7 @@
-const express = require('express');
-const cors = require('cors');
-const { Pool } = require('pg');
+import express from "express";
+import cors from "cors";
+import pkg from "pg";
+const { Pool } = pkg;
 
 const app = express();
 const pool = new Pool({
@@ -30,17 +31,17 @@ app.get('/dinos', async (req, res) => {
 });
 
 // Rota para buscar um cliente por ID
-app.get('/clientes/:id', async (req, res) => {
+app.get('/dinos/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const result = await pool.query('SELECT * FROM clientes WHERE id = $1', [id]);
+        const result = await pool.query('SELECT * FROM DINO WHERE id_dino = $1', [id]);
         if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Cliente não encontrado' });
+            return res.status(404).json({ error: 'Dino não encontrado' });
         }
         res.json(result.rows[0]);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ error: 'Erro ao buscar cliente' });
+        res.status(500).json({ error: 'Erro interno ao buscar dino' });
     }
 });
 
