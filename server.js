@@ -46,17 +46,17 @@ app.get('/dinos/:id', async (req, res) => {
 });
 
 // Rota para adicionar um cliente
-app.post('/clientes', async (req, res) => {
-    const { nome, endereco, email, telefone } = req.body;
+app.post('/add', async (req, res) => {
+    const { nome, altura, comprimento, peso, velocidade, agilidade, longevidade, numero_magico, imagem } = req.body;
     try {
         const result = await pool.query(
-            'INSERT INTO clientes (nome, endereco, email, telefone) VALUES ($1, $2, $3, $4) RETURNING *',
-            [nome, endereco, email, telefone]
+            'INSERT INTO DINO (NOME, ALTURA, COMPRIMENTO, PESO, VELOCIDADE, AGILIDADE, LONGEVIDADE, NUMERO_MAGICO, IMAGEM) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
+            [nome, altura, comprimento, peso, velocidade, agilidade, longevidade, numero_magico, imagem]
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ error: 'Erro ao adicionar cliente' });
+        res.status(500).json({ error: 'Erro ao adicionar dino' });
     }
 });
 
