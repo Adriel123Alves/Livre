@@ -79,18 +79,18 @@ app.put('/att/:id', async (req, res) => {
     }
 });
 
-// Rota para deletar um cliente
-app.delete('/clientes/:id', async (req, res) => {
+// Rota para deletar um dino
+app.delete('/del/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const result = await pool.query('DELETE FROM clientes WHERE id = $1 RETURNING *', [id]);
+        const result = await pool.query('DELETE FROM DINO WHERE ID_DINO = $1 RETURNING *', [id]);
         if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Cliente não encontrado' });
+            return res.status(404).json({ error: 'Dino não encontrado' });
         }
-        res.json({ message: 'Cliente deletado com sucesso' });
+        res.json({ message: 'Dino deletado com sucesso' });
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ error: 'Erro ao deletar cliente' });
+        res.status(500).json({ error: 'Erro ao deletar Dino' });
     }
 });
 
