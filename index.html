@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trunfo Dino - Gerenciador</title>
+    <style>
+        :root {
+            --bg-color: #12261a;
+            --card-bg: #1e3b29;
+            --text-main: #e8f5e9;
+            --text-muted: #a5d6a7;
+            --accent: #fbc02d;
+            --accent-hover: #f9a825;
+            --danger: #e53935;
+            --danger-hover: #c62828;
+            --input-bg: #2d5a3f;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: var(--accent);
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Layout Principal */
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 900px) {
+            .container {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+        }
+
+        /* Formulário */
+        .form-section {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            flex: 1;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            position: sticky;
+            top: 20px;
+        }
+
+        .form-section h2 {
+            margin-bottom: 20px;
+            color: var(--accent);
+            border-bottom: 2px solid var(--input-bg);
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .input-group.full {
+            grid-template-columns: 1fr;
+            margin-top: 15px;
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-field label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .input-field input {
+            background-color: var(--input-bg);
+            border: 1px solid #3d7a55;
+            color: #fff;
+            padding: 10px;
+            border-radius: 6px;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        .input-field input:focus {
+            border-color: var(--accent);
+        }
+
+        .btn-submit {
+            background-color: var(--accent);
+            color: #111;
+            font-weight: bold;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            transition: background 0.3s;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Lista de Dinos (Cards) */
+        .list-section {
+            flex: 2;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .dino-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            border: 2px solid transparent;
+            transition: transform 0.2s, border 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dino-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .dino-img {
+            width: 100%;
+            height: 180px;
+            background-color: var(--input-bg);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .dino-info {
+            padding: 15px;
+            flex-grow: 1;
+        }
+
+        .dino-info h3 {
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .stats span {
+            background: rgba(0,0,0,0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .stats strong {
+            color: var(--text-main);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+
+        .btn-action:hover {
+            opacity: 0.8;
+        }
+
+        .btn-edit { background-color: var(--text-muted); color: #111; }
+        .btn-delete { background-color: var(--danger); color: #fff; }
+        
+        .empty-msg {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🦖 Trunfo Dino</h1>
+    </header>
+
+    <div class="container">
+        <div class="form-section">
+            <h2 id="form-title">Adicionar Dinossauro</h2>
+            <form id="dino-form">
+                <input type="hidden" id="dino-id">
+                
+                <div class="input-group full">
+                    <div class="input-field">
+                        <label>Nome do Dinossauro</label>
+                        <input type="text" id="nome" required placeholder="Ex: Tiranossauro Rex">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-field">
+                        <label>Altura (m)</label>
+                        <input type="number" step="0.1" id="altura" required>
+                    </div>
+                    <div class="input-field">
+                        <label>Comprimento (m)</label>
+                        <input type="number" step="0.1" id="comprimento" required>
+                    </div>
+                    <div class="input-field">
+                        <label>Peso (kg)</label>
+                        <input type="number" step="0.1" id="peso" required>
+                    </div>
+                    <div class="input-field">
+                        <label>Velocidade</label>
+                        <input type="number" id="velocidade" required>
+                    </div>
+                    <div class="input-field">
+                        <label>Agilidade</label>
+                        <input type="number" id="agilidade" required>
+                    </div>
+                    <div class="input-field">
+                        <label>Longevidade (anos)</label>
+                        <input type="number" id="longevidade" required>
+                    </div>
+                </div>
+
+                <div class="input-group full">
+                    <div class="input-field">
+                        <label>Número Mágico</label>
+                        <input type="number" id="numero_magico" required>
+                    </div>
+                    <div class="input-field">
+                        <label>URL da Imagem</label>
+                        <input type="url" id="imagem" placeholder="https://link-da-imagem.com/foto.jpg">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="btn-submit">Salvar Dinossauro</button>
+                <button type="button" class="btn-submit" id="btn-cancel" style="display:none; background-color: #555; margin-top: 10px;">Cancelar Edição</button>
+            </form>
+        </div>
+
+        <div class="list-section" id="dino-list">
+            </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+        const dinoForm = document.getElementById('dino-form');
+        const dinoList = document.getElementById('dino-list');
+        const formTitle = document.getElementById('form-title');
+        const btnSubmit = document.getElementById('btn-submit');
+        const btnCancel = document.getElementById('btn-cancel');
+
+        // Carregar Dinos ao iniciar
+        document.addEventListener('DOMContentLoaded', fetchDinos);
+
+        // Buscar todos os Dinos
+        async function fetchDinos() {
+            try {
+                const response = await fetch(`${API_URL}/dinos`);
+                const dinos = await response.json();
+                renderDinos(dinos);
+            } catch (error) {
+                console.error("Erro ao buscar dinos:", error);
+                dinoList.innerHTML = `<div class="empty-msg">⚠️ Erro ao conectar com o servidor. Verifique se a API está rodando.</div>`;
+            }
+        }
+
+        // Renderizar Cards na Tela
+        function renderDinos(dinos) {
+            dinoList.innerHTML = '';
+            
+            if (dinos.length === 0) {
+                dinoList.innerHTML = '<div class="empty-msg">Nenhum dinossauro encontrado. Adicione o primeiro!</div>';
+                return;
+            }
+
+            dinos.forEach(dino => {
+                // Prevenção para caso a API retorne os nomes das colunas em maiúsculo ou minúsculo
+                const id = dino.id_dino || dino.ID_DINO;
+                const imagem = dino.imagem || dino.IMAGEM || 'https://via.placeholder.com/300x180/2d5a3f/e8f5e9?text=Sem+Foto';
+                
+                const card = document.createElement('div');
+                card.className = 'dino-card';
+                card.innerHTML = `
+                    <div class="dino-img" style="background-image: url('${imagem}')"></div>
+                    <div class="dino-info">
+                        <h3>${dino.nome || dino.NOME}</h3>
+                        <div class="stats">
+                            <span>Alt: <strong>${dino.altura || dino.ALTURA}m</strong></span>
+                            <span>Comp: <strong>${dino.comprimento || dino.COMPRIMENTO}m</strong></span>
+                            <span>Peso: <strong>${dino.peso || dino.PESO}kg</strong></span>
+                            <span>Veloc: <strong>${dino.velocidade || dino.VELOCIDADE}</strong></span>
+                            <span>Agil: <strong>${dino.agilidade || dino.AGILIDADE}</strong></span>
+                            <span>Long: <strong>${dino.longevidade || dino.LONGEVIDADE}a</strong></span>
+                            <span style="grid-column: 1 / -1; background: var(--accent); color: #000; text-align:center;">
+                                Magia: <strong>${dino.numero_magico || dino.NUMERO_MAGICO}</strong>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-action btn-edit" onclick='editDino(${JSON.stringify(dino).replace(/'/g, "&#39;")})'>Editar</button>
+                        <button class="btn-action btn-delete" onclick="deleteDino(${id})">Excluir</button>
+                    </div>
+                `;
+                dinoList.appendChild(card);
+            });
+        }
+
+        // Adicionar ou Atualizar Dino
+        dinoForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const dinoId = document.getElementById('dino-id').value;
+            const payload = {
+                nome: document.getElementById('nome').value,
+                altura: parseFloat(document.getElementById('altura').value),
+                comprimento: parseFloat(document.getElementById('comprimento').value),
+                peso: parseFloat(document.getElementById('peso').value),
+                velocidade: parseInt(document.getElementById('velocidade').value),
+                agilidade: parseInt(document.getElementById('agilidade').value),
+                longevidade: parseInt(document.getElementById('longevidade').value),
+                numero_magico: parseInt(document.getElementById('numero_magico').value),
+                imagem: document.getElementById('imagem').value
+            };
+
+            try {
+                if (dinoId) {
+                    // Atualizar (PUT)
+                    await fetch(`${API_URL}/att/${dinoId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                } else {
+                    // Adicionar (POST)
+                    await fetch(`${API_URL}/add`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                }
+                
+                resetForm();
+                fetchDinos();
+            } catch (error) {
+                console.error("Erro ao salvar dino:", error);
+                alert("Erro ao salvar o dinossauro. Verifique o console.");
+            }
+        });
+
+        // Preparar formulário para edição
+        function editDino(dino) {
+            document.getElementById('dino-id').value = dino.id_dino || dino.ID_DINO;
+            document.getElementById('nome').value = dino.nome || dino.NOME;
+            document.getElementById('altura').value = dino.altura || dino.ALTURA;
+            document.getElementById('comprimento').value = dino.comprimento || dino.COMPRIMENTO;
+            document.getElementById('peso').value = dino.peso || dino.PESO;
+            document.getElementById('velocidade').value = dino.velocidade || dino.VELOCIDADE;
+            document.getElementById('agilidade').value = dino.agilidade || dino.AGILIDADE;
+            document.getElementById('longevidade').value = dino.longevidade || dino.LONGEVIDADE;
+            document.getElementById('numero_magico').value = dino.numero_magico || dino.NUMERO_MAGICO;
+            document.getElementById('imagem').value = dino.imagem || dino.IMAGEM || '';
+
+            formTitle.innerText = "Editar Dinossauro";
+            btnSubmit.innerText = "Atualizar Dinossauro";
+            btnCancel.style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        // Deletar Dino
+        async function deleteDino(id) {
+            if (confirm("Tem certeza que deseja excluir este dinossauro?")) {
+                try {
+                    await fetch(`${API_URL}/del/${id}`, { method: 'DELETE' });
+                    fetchDinos();
+                } catch (error) {
+                    console.error("Erro ao deletar dino:", error);
+                    alert("Erro ao excluir o dinossauro.");
+                }
+            }
+        }
+
+        // Cancelar Edição e Resetar Form
+        btnCancel.addEventListener('click', resetForm);
+
+        function resetForm() {
+            dinoForm.reset();
+            document.getElementById('dino-id').value = '';
+            formTitle.innerText = "Adicionar Dinossauro";
+            btnSubmit.innerText = "Salvar Dinossauro";
+            btnCancel.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
