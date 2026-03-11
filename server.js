@@ -19,7 +19,7 @@ const pool = new Pool({
 app.use(cors());
 app.use(express.json());
 
-// Rota para buscar todos os clientes
+// Rota para buscar todos os dinos
 app.get('/dinos', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM DINO');
@@ -30,7 +30,7 @@ app.get('/dinos', async (req, res) => {
     }
 });
 
-// Rota para buscar um cliente por ID
+// Rota para buscar um dino por ID
 app.get('/dinos/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -41,11 +41,11 @@ app.get('/dinos/:id', async (req, res) => {
         res.json(result.rows[0]);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ error: 'Erro interno ao buscar dino' });
+        res.status(500).json({ error: 'Erro interno ao buscar Dino' });
     }
 });
 
-// Rota para adicionar um cliente
+// Rota para adicionar um dino
 app.post('/add', async (req, res) => {
     const { nome, altura, comprimento, peso, velocidade, agilidade, longevidade, numero_magico, imagem } = req.body;
     try {
@@ -56,26 +56,26 @@ app.post('/add', async (req, res) => {
         res.status(201).json(result.rows[0]);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ error: 'Erro ao adicionar dino' });
+        res.status(500).json({ error: 'Erro ao adicionar Dino' });
     }
 });
 
-// Rota para atualizar um cliente
-app.put('/clientes/:id', async (req, res) => {
+// Rota para atualizar um dino
+app.put('/att/:id', async (req, res) => {
     const { id } = req.params;
-    const { nome, endereco, email, telefone } = req.body;
+    const {nome, altura, comprimento, peso, velocidade, agilidade, longevidade, numero_magico, imagem } = req.body;
     try {
         const result = await pool.query(
-            'UPDATE clientes SET nome = $1, endereco = $2, email = $3, telefone = $4 WHERE id = $5 RETURNING *',
-            [nome, endereco, email, telefone, id]
+            'UPDATE DINO SET NOME = $1, ALTURA = $2, COMPRIMENTO = $3, PESO = $4, VELOCIDADE = $5, AGILIDADE = $6, LONGEVIDADE = $7, NUMERO_MAGICO = $8, IMAGEM = $9 WHERE ID_DINO = $10 RETURNING *',
+            [nome, altura, comprimento, peso, velocidade, agilidade, longevidade, numero_magico, imagem, id]
         );
         if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Cliente não encontrado' });
+            return res.status(404).json({ error: 'Dino não encontrado' });
         }
         res.json(result.rows[0]);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ error: 'Erro ao atualizar cliente' });
+        res.status(500).json({ error: 'Erro ao atualizar Dino' });
     }
 });
 
