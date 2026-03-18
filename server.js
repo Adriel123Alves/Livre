@@ -70,6 +70,34 @@ app.get('/dinos/random/:n', async (req, res) => {
     }
 });
 
+// Rota para buscar os N dinos mais famosos
+app.get('/dinos/famosos/:n', async (req, res) => {
+    const { n } = req.params;
+    
+    // Converte o parâmetro da URL para número e garante que seja válido
+    const limit = parseInt(n, 10);
+    
+    if (isNaN(limit) || limit <= 0) {
+        return res.status(400).json({ error: 'Por favor, forneça um número válido maior que zero.' });
+    }
+
+    try {
+        // O comando ORDER BY FAMA DESC ordena do mais famoso para o menos famoso
+        // O LIMIT define quantos dinos o banco vai retornar (ex: os top 5, top 10)
+        const result = await pool.query('SELECT * FROM DINO ORDER BY FAMA DESC LIMIT $1', [limit]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Nenhum dino encontrado no banco de dados.' });
+        }
+        
+        // Retorna o array completo com os dinos mais famosos
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: 'Erro interno ao buscar os dinos mais famosos.' });
+    }
+});
+
 // Rota para adicionar um dino
 app.post('/add', async (req, res) => {
     // Adicionado fama e tipo
