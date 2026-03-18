@@ -1,0 +1,242 @@
+let gameState = {
+    p1: { name: '', deck: [] },
+    p2: { name: '', deck: [] },
+    turn: 1, 
+    pool: [], 
+    currentCardP1: null,
+    currentCardP2: null,
+    isResolving: false 
+};
+
+const screens = {
+    setup: document.getElementById('setup-screen'),
+    game: document.getElementById('game-screen'),
+    win: document.getElementById('win-screen')
+};
+
+// Ao clicar em Começar Jogo
+document.getElementById('btn-start').addEventListener('click', async () => {
+    const name1 = document.getElementById('player1-name').value;
+    const name2 = document.getElementById('player2-name').value;
+    const count = parseInt(document.getElementById('card-count').value);
+    const mode = document.getElementById('game-mode').value;
+    const errorMsg = document.getElementById('setup-error');
+
+    if (!name1 || !name2) return errorMsg.innerText = "Preencha os nomes dos jogadores.";
+    if (count % 2 !== 0 || count < 2) return errorMsg.innerText = "O número de cartas deve ser par e maior que 0.";
+
+    errorMsg.innerText = "Buscando cartas no banco de dados...";
+    
+    try {
+        const url = `http://localhost:3000/dinos/${mode}/${count}`;
+        const response = await fetch(url);
+        
+        if (!response.ok) throw new Error('Erro ao buscar dinos da API.');
+        
+        const dinos = await response.json();
+        
+        if (dinos.length < count) {
+             return errorMsg.innerText = `Só há ${dinos.length} dinos no banco. Reduza o número de cartas.`;
+        }
+
+        gameState.p1.name = name1;
+        gameState.p2.name = name2;
+        dinos.forEach((dino, index) => {
+            if (index % 2 === 0) gameState.p1.deck.push(dino);
+            else gameState.p2.deck.push(dino);
+        });
+
+        // Configura nomes com as coroas
+        document.getElementById('name-p1').innerHTML = `${gameState.p1.name} <span class="crown">👑</span>`;
+        document.getElementById('name-p2').innerHTML = `<span class="crown">👑</span> ${gameState.p2.name}`;
+
+        startGame();
+    } catch (err) {
+        errorMsg.innerText = "Erro ao conectar com o servidor. Verifique se a API está rodando.";
+        console.error(err);
+    }
+});
+
+function startGame() {
+    screens.setup.classList.remove('active');
+    screens.game.classList.add('active');
+    renderRound();
+}
+
+function renderRound() {
+    gameState.isResolving = false;
+    
+    // Zera o botão e exibe o VS
+    const nextBtn = document.getElementById('btn-next-turn');
+    if (nextBtn) {
+        nextBtn.classList.remove('show', 'hidden'); 
+    }
+    
+    const vsBadge = document.getElementById('vs-badge');
+    if (vsBadge) {
+        vsBadge.style.display = 'block';
+    }
+    
+    const countP1 = gameState.p1.deck.length;
+    const countP2 = gameState.p2.deck.length;
+
+    // Atualiza Placar
+    document.getElementById('count-p1').innerText = countP1;
+    document.getElementById('count-p2').innerText = countP2;
+
+    // Coroa e Destaque
+    document.getElementById('area-p1').classList.remove('winning');
+    document.getElementById('area-p2').classList.remove('winning');
+
+    if (countP1 > countP2) {
+        document.getElementById('area-p1').classList.add('winning');
+    } else if (countP2 > countP1) {
+        document.getElementById('area-p2').classList.add('winning');
+    }
+
+    // Pool de Empate
+    if (gameState.pool.length > 0) {
+        document.getElementById('pool-status').classList.remove('hidden');
+        document.getElementById('pool-count').innerText = gameState.pool.length;
+    } else {
+        document.getElementById('pool-status').classList.add('hidden');
+    }
+
+    // Fim de Jogo
+    if (countP1 === 0) return endGame(gameState.p2.name);
+    if (countP2 === 0) return endGame(gameState.p1.name);
+
+    gameState.currentCardP1 = gameState.p1.deck[0];
+    gameState.currentCardP2 = gameState.p2.deck[0];
+
+    // Número Mágico
+    gameState.currentCardP1.numero_magico = Math.floor(Math.random() * 10) + 1;
+    gameState.currentCardP2.numero_magico = Math.floor(Math.random() * 10) + 1;
+
+    // Cabeçalho
+    const activeName = gameState.turn === 1 ? gameState.p1.name : gameState.p2.name;
+    document.getElementById('turn-indicator').innerText = `Vez de ${activeName}`;
+    document.getElementById('game-status').innerText = "Escolha um atributo para desafiar!";
+    document.getElementById('game-status').style.color = "var(--accent-primary)";
+
+    const slotP1 = document.getElementById('card-p1');
+    const slotP2 = document.getElementById('card-p2');
+
+    slotP1.innerHTML = createCardHTML(gameState.currentCardP1, gameState.turn === 1, 'p1');
+    slotP2.innerHTML = createCardHTML(gameState.currentCardP2, gameState.turn === 2, 'p2');
+
+    if (gameState.turn === 1) attachClickEvents(slotP1);
+    if (gameState.turn === 2) attachClickEvents(slotP2);
+}
+
+function createCardHTML(dino, isActive, playerId) {
+    const imgUrl = dino.imagem || 'https://via.placeholder.com/260x140?text=Sem+Imagem';
+    const flippedClass = isActive ? 'flipped' : ''; 
+    
+    return `
+        <div class="card-scene">
+            <div class="card-inner ${flippedClass}" id="inner-${playerId}">
+                <div class="card-back"></div>
+                <div class="card-front">
+                    <h4>${dino.nome}</h4>
+                    <div class="img-container"><img src="${imgUrl}" alt="${dino.nome}"></div>
+                    <div class="type-badge">${dino.tipo}</div>
+                    <ul class="attributes">
+                        <li data-attr="altura">Altura <span>${dino.altura}m</span></li>
+                        <li data-attr="comprimento">Compr. <span>${dino.comprimento}m</span></li>
+                        <li data-attr="peso">Peso <span>${dino.peso}kg</span></li>
+                        <li data-attr="velocidade">Velocidade <span>${dino.velocidade}</span></li>
+                        <li data-attr="agilidade">Agilidade <span>${dino.agilidade}</span></li>
+                        <li data-attr="longevidade">Longevidade <span>${dino.longevidade}</span></li>
+                        <li data-attr="numero_magico">Nº Mágico <span>${dino.numero_magico}</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function attachClickEvents(slotElement) {
+    const items = slotElement.querySelectorAll('.attributes li');
+    items.forEach(item => {
+        item.addEventListener('click', () => {
+            if (!gameState.isResolving) resolveHand(item.getAttribute('data-attr'));
+        });
+    });
+}
+
+function resolveHand(attributeStr) {
+    gameState.isResolving = true; 
+
+    document.getElementById('inner-p1').classList.add('flipped');
+    document.getElementById('inner-p2').classList.add('flipped');
+
+    document.querySelectorAll(`[data-attr="${attributeStr}"]`).forEach(el => {
+        el.style.backgroundColor = 'var(--accent-primary)';
+        el.style.color = 'var(--bg-main)';
+        el.style.paddingLeft = '25px';
+    });
+
+    const val1 = parseFloat(gameState.currentCardP1[attributeStr]);
+    const val2 = parseFloat(gameState.currentCardP2[attributeStr]);
+    const statusEl = document.getElementById('game-status');
+
+    const card1 = gameState.p1.deck.shift();
+    const card2 = gameState.p2.deck.shift();
+
+    setTimeout(() => {
+        if (val1 > val2) {
+            statusEl.innerText = `${gameState.p1.name} Venceu a Mão! (${val1} > ${val2})`;
+            statusEl.style.color = "var(--accent-primary)";
+            gameState.p1.deck.push(card1, card2, ...gameState.pool);
+            gameState.pool = [];
+            gameState.turn = 1;
+        } 
+        else if (val2 > val1) {
+            statusEl.innerText = `${gameState.p2.name} Venceu a Mão! (${val2} > ${val1})`;
+            statusEl.style.color = "var(--accent-primary)";
+            gameState.p2.deck.push(card1, card2, ...gameState.pool);
+            gameState.pool = [];
+            gameState.turn = 2;
+        } 
+        else {
+            statusEl.innerText = `Empate! As cartas vão para a mesa. (${val1} = ${val2})`;
+            statusEl.style.color = "#fbbf24"; 
+            gameState.pool.push(card1, card2);
+        }
+
+        const vsBadge = document.getElementById('vs-badge');
+        if (vsBadge) {
+            vsBadge.style.display = 'none';
+        }
+
+        const nextBtn = document.getElementById('btn-next-turn');
+        if (nextBtn) {
+            nextBtn.classList.remove('hidden'); 
+            nextBtn.classList.add('show');
+            
+            // Nova lógica de transição suave
+            nextBtn.onclick = () => {
+                // 1. Esconde o botão imediatamente
+                nextBtn.classList.remove('show'); 
+                
+                // 2. Adiciona a classe 'exit' nas cartas atuais para elas sumirem
+                document.querySelectorAll('.card-scene').forEach(card => {
+                    card.classList.add('exit');
+                });
+                
+                // 3. Espera 400ms (o tempo da animação acabar) e só então renderiza a nova rodada
+                setTimeout(() => {
+                    renderRound();
+                }, 400); 
+            };
+        }
+    }, 600); // <--- O QUE FALTAVA: Fechamento do setTimeout e tempo de 600ms
+} // <--- O QUE FALTAVA: Fechamento da função resolveHand
+
+// Agora sim a função endGame fica separadinha e correta
+function endGame(winnerName) {
+    screens.game.classList.remove('active');
+    screens.win.classList.add('active');
+    document.getElementById('winner-name').innerText = `${winnerName} Venceu!`;
+}
