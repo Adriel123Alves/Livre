@@ -6,11 +6,8 @@ const { Pool } = pkg;
 const app = express();
 const pool = new Pool({
     user: 'postgres', // Substitua pelo seu usuário do PostgreSQL
-    // user: 'postgre', // Substitua pelo seu usuário do PostgreSQL
-    // user: 'senai', // Substitua pelo seu usuário do PostgreSQL
     host: 'localhost',
     database: 'trunfo-dino', // Nome da sua database
-    // password: 'senai', // Substitua pela sua senha
     password: 'senai', // Substitua pela sua senha
     port: 5433, // Porta padrão do PostgreSQL
 });
@@ -26,7 +23,7 @@ app.get('/dinos', async (req, res) => {
         res.json(result.rows);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ error: 'Erro ao buscar clientes' });
+        res.status(500).json({ error: 'Erro ao buscar dinos' });
     }
 });
 
@@ -34,7 +31,8 @@ app.get('/dinos', async (req, res) => {
 app.get('/dinos/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const result = await pool.query('SELECT * FROM DINO WHERE id_dino = $1', [id]);
+        // Atualizado id_dino para id conforme a tabela
+        const result = await pool.query('SELECT * FROM DINO WHERE id = $1', [id]);
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Dino não encontrado' });
         }
@@ -47,11 +45,12 @@ app.get('/dinos/:id', async (req, res) => {
 
 // Rota para adicionar um dino
 app.post('/add', async (req, res) => {
-    const { nome, altura, comprimento, peso, velocidade, agilidade, longevidade, numero_magico, imagem } = req.body;
+    // Adicionado fama e tipo
+    const { nome, altura, comprimento, peso, velocidade, agilidade, longevidade, numero_magico, imagem, fama, tipo } = req.body;
     try {
         const result = await pool.query(
-            'INSERT INTO DINO (NOME, ALTURA, COMPRIMENTO, PESO, VELOCIDADE, AGILIDADE, LONGEVIDADE, NUMERO_MAGICO, IMAGEM) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
-            [nome, altura, comprimento, peso, velocidade, agilidade, longevidade, numero_magico, imagem]
+            'INSERT INTO DINO (NOME, ALTURA, COMPRIMENTO, PESO, VELOCIDADE, AGILIDADE, LONGEVIDADE, NUMERO_MAGICO, IMAGEM, FAMA, TIPO) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
+            [nome, altura, comprimento, peso, velocidade, agilidade, longevidade, numero_magico, imagem, fama, tipo]
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {
@@ -63,11 +62,13 @@ app.post('/add', async (req, res) => {
 // Rota para atualizar um dino
 app.put('/att/:id', async (req, res) => {
     const { id } = req.params;
-    const {nome, altura, comprimento, peso, velocidade, agilidade, longevidade, numero_magico, imagem } = req.body;
+    // Adicionado fama e tipo
+    const { nome, altura, comprimento, peso, velocidade, agilidade, longevidade, numero_magico, imagem, fama, tipo } = req.body;
     try {
         const result = await pool.query(
-            'UPDATE DINO SET NOME = $1, ALTURA = $2, COMPRIMENTO = $3, PESO = $4, VELOCIDADE = $5, AGILIDADE = $6, LONGEVIDADE = $7, NUMERO_MAGICO = $8, IMAGEM = $9 WHERE ID_DINO = $10 RETURNING *',
-            [nome, altura, comprimento, peso, velocidade, agilidade, longevidade, numero_magico, imagem, id]
+            // Atualizado para incluir fama, tipo, e checar apenas 'id'
+            'UPDATE DINO SET NOME = $1, ALTURA = $2, COMPRIMENTO = $3, PESO = $4, VELOCIDADE = $5, AGILIDADE = $6, LONGEVIDADE = $7, NUMERO_MAGICO = $8, IMAGEM = $9, FAMA = $10, TIPO = $11 WHERE ID = $12 RETURNING *',
+            [nome, altura, comprimento, peso, velocidade, agilidade, longevidade, numero_magico, imagem, fama, tipo, id]
         );
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Dino não encontrado' });
@@ -83,7 +84,8 @@ app.put('/att/:id', async (req, res) => {
 app.delete('/del/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const result = await pool.query('DELETE FROM DINO WHERE ID_DINO = $1 RETURNING *', [id]);
+        // Atualizado id_dino para id conforme a tabela
+        const result = await pool.query('DELETE FROM DINO WHERE ID = $1 RETURNING *', [id]);
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Dino não encontrado' });
         }
@@ -97,4 +99,3 @@ app.delete('/del/:id', async (req, res) => {
 app.listen(3000, () => {
     console.log('Servidor rodando na porta 3000');
 });
-

@@ -5,6 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trunfo Dino - Gerenciador</title>
     <style>
+        /* Estilização padrão para o select dentro do input-field */
+        .input-field select {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 5px;
+            border: 1px solid #cccccc63; /* Ajuste para a cor da borda dos seus inputs */
+            border-radius: 6px; /* Ajuste para o arredondamento dos seus inputs */
+            font-size: 16px;
+            font-family: inherit;
+            color: #333;
+            background-color: #ffffff13;
+            box-sizing: border-box;
+            cursor: pointer;
+            
+            /* Remove a setinha padrão feia do navegador */
+            appearance: none; 
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            
+            /* Adiciona uma setinha customizada mais bonita */
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+
+        /* Estilo quando o select é clicado/focado */
+        .input-field select:focus {
+            outline: none;
+            border-color: #007BFF; /* Mude para a cor principal do seu projeto */
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3); /* Mude para a cor principal do seu projeto */
+        }
+
+        /* Deixa o texto do placeholder (primeira opção) com cor mais clara */
+        .input-field select:invalid, 
+        .input-field select option[value=""] {
+            color: #88888865;
+        }
+
+        /* Garante que as opções normais fiquem escuras */
+        .input-field select option {
+            color: #333;
+        }        
         :root {
             --bg-color: #0f172a;      /* Fundo principal escuro */
             --card-bg: #1e293b;       /* Fundo dos cards e modal */
@@ -337,6 +380,23 @@
                     <div class="input-field">
                         <label>Longevidade (anos)</label>
                         <input type="number" id="longevidade" required>
+                    </div>
+                </div>
+
+                <div class="input-group full">
+                    <div class="input-field">
+                        <label>Fama</label>
+                        <input type="number" id="fama" required placeholder="Ex: 10">
+                    </div>
+                    <div class="input-field">
+                        <label>Tipo</label>
+                        <select id="tipo" required>
+                            <option value="" disabled selected>Selecione o tipo...</option>
+                            <option value="Carnívoro">Carnívoro</option>
+                            <option value="Herbívoro">Herbívoro</option>
+                            <option value="Onívoro">Onívoro</option>
+                            <option value="Piscívoro">Piscívoro</option>
+                        </select>
                     </div>
                 </div>
 
