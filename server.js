@@ -43,6 +43,33 @@ app.get('/dinos/:id', async (req, res) => {
     }
 });
 
+// Rota para buscar N dinos aleatórios
+app.get('/dinos/random/:n', async (req, res) => {
+    const { n } = req.params;
+    
+    // Converte o parâmetro da URL para número e garante que seja válido
+    const limit = parseInt(n, 10);
+    
+    if (isNaN(limit) || limit <= 0) {
+        return res.status(400).json({ error: 'Por favor, forneça um número válido maior que zero.' });
+    }
+
+    try {
+        // O comando ORDER BY RANDOM() embaralha os resultados, e o LIMIT define quantos pegar
+        const result = await pool.query('SELECT * FROM DINO ORDER BY RANDOM() LIMIT $1', [limit]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Nenhum dino encontrado no banco de dados.' });
+        }
+        
+        // Retorna o array completo de dinos encontrados
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: 'Erro interno ao buscar dinos aleatórios.' });
+    }
+});
+
 // Rota para adicionar um dino
 app.post('/add', async (req, res) => {
     // Adicionado fama e tipo
