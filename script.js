@@ -1,3 +1,15 @@
+const iconesAtributos = {
+    'altura': '📏',
+    'peso': '🪨',
+    'comprimento': '🦖',
+    'velocidade': '⚡',
+    'força': '⚔️',
+    'ataque': '⚔️',
+    'defesa': '🛡️',
+    'inteligência': '🧠',
+    'agilidade': '🌪️'
+};
+
 let gameState = {
     p1: { name: '', deck: [] },
     p2: { name: '', deck: [] },
@@ -102,6 +114,7 @@ function startGame() {
 }
 
 function renderRound() {
+    updateTugOfWar()
     gameState.isResolving = false;
     
     // Zera o botão e exibe o VS
@@ -180,13 +193,13 @@ function createCardHTML(dino, isActive, playerId) {
                     <div class="img-container"><img src="${imgUrl}" alt="${dino.nome}"></div>
                     <div class="type-badge">${dino.tipo}</div>
                     <ul class="attributes">
-                        <li data-attr="altura">Altura <span>${dino.altura}m</span></li>
-                        <li data-attr="comprimento">Compr. <span>${dino.comprimento}m</span></li>
-                        <li data-attr="peso">Peso <span>${dino.peso}kg</span></li>
-                        <li data-attr="velocidade">Velocidade <span>${dino.velocidade}</span></li>
-                        <li data-attr="agilidade">Agilidade <span>${dino.agilidade}</span></li>
-                        <li data-attr="longevidade">Longevidade <span>${dino.longevidade}</span></li>
-                        <li data-attr="numero_magico">Nº Mágico <span>${dino.numero_magico}</span></li>
+                        <li data-attr="altura"><span class="stat-icon">📏</span> Altura <span>${dino.altura}m</span></li>
+                        <li data-attr="comprimento"><span class="stat-icon">🦖</span> Compr. <span>${dino.comprimento}m</span></li>
+                        <li data-attr="peso"><span class="stat-icon">🪨</span> Peso <span>${dino.peso}kg</span></li>
+                        <li data-attr="velocidade"><span class="stat-icon">⚡</span> Velocidade <span>${dino.velocidade}</span></li>
+                        <li data-attr="agilidade"><span class="stat-icon">🌪️</span> Agilidade <span>${dino.agilidade}</span></li>
+                        <li data-attr="longevidade"><span class="stat-icon">⏳</span> Longevidade <span>${dino.longevidade}</span></li>
+                        <li data-attr="numero_magico"><span class="stat-icon">✨</span> Nº Mágico <span>${dino.numero_magico}</span></li>
                     </ul>
                 </div>
             </div>
@@ -308,4 +321,27 @@ function createConfetti() {
         
         document.body.appendChild(confetti);
     }
+}
+
+// Atualiza a barra de cabo de guerra
+function updateTugOfWar() {
+    const p1Cards = gameState.p1.deck.length;
+    const p2Cards = gameState.p2.deck.length;
+    
+    // Total de cartas no jogo (ignorando o empate temporário da mesa)
+    const totalInDecks = p1Cards + p2Cards; 
+    
+    if (totalInDecks === 0) return;
+
+    // Calcula a porcentagem
+    const p1Percent = (p1Cards / totalInDecks) * 100;
+    const p2Percent = (p2Cards / totalInDecks) * 100;
+
+    // Atualiza a largura das barras
+    document.getElementById('bar-p1').style.width = `${p1Percent}%`;
+    document.getElementById('bar-p2').style.width = `${p2Percent}%`;
+
+    // Atualiza os números de cartas nos cantos
+    document.getElementById('score-p1').innerText = p1Cards;
+    document.getElementById('score-p2').innerText = p2Cards;
 }
