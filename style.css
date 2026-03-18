@@ -333,3 +333,311 @@ header h2 { margin: 0 0 10px 0; }
     visibility: visible;
     transform: translateY(0);
 }
+
+/* --- Tela de Vitória Animada --- */
+.win-modal {
+    background: linear-gradient(135deg, var(--bg-panel), #0f172a);
+    border: 2px solid var(--accent-primary);
+    box-shadow: 0 0 50px rgba(16, 185, 129, 0.4);
+    transform: scale(0.8);
+    opacity: 0;
+    /* Animação que faz a janela "pular" para a tela */
+    animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.trophy {
+    font-size: 80px;
+    margin-bottom: 10px;
+    /* Troféu flutuando e piscando dourado */
+    animation: floatTrophy 2s ease-in-out infinite, glowTrophy 1.5s alternate infinite;
+}
+
+.win-title {
+    font-size: 36px;
+    color: var(--accent-primary);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 5px;
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.win-subtitle {
+    color: var(--text-muted);
+    margin-bottom: 30px;
+    font-style: italic;
+}
+
+.btn-play-again {
+    font-size: 18px;
+    padding: 16px 32px;
+    background: linear-gradient(45deg, var(--accent-primary), #059669);
+    box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+    animation: pulseBtn 2s infinite; /* Botão chamando para clicar */
+}
+
+/* Confetes da Vitória */
+.confetti {
+    position: fixed;
+    top: -20px;
+    width: 10px;
+    height: 10px;
+    z-index: 9999;
+    pointer-events: none; /* Para não atrapalhar o clique no botão */
+    animation: fall linear forwards;
+}
+
+/* Keyframes das Animações */
+@keyframes popIn {
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes floatTrophy {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-15px) scale(1.1); }
+}
+
+@keyframes glowTrophy {
+    from { filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.4)); }
+    to { filter: drop-shadow(0 0 40px rgba(251, 191, 36, 1)); }
+}
+
+@keyframes pulseBtn {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes fall {
+    to { transform: translateY(110vh) rotate(720deg); }
+}
+
+/* --- Tela de Início Temática e Radical --- */
+.setup-modal {
+    max-width: 650px; /* Bem mais larga e imponente */
+    background: linear-gradient(to bottom, #0f172a, #1e293b);
+    border: 3px solid var(--accent-primary);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(16, 185, 129, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efeito sutil de "arranhão" no fundo */
+.setup-modal::before {
+    content: "";
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(16, 185, 129, 0.05) 10px,
+        rgba(16, 185, 129, 0.05) 15px
+    );
+    transform: rotate(-20deg);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.theme-header {
+    position: relative;
+    z-index: 1;
+}
+
+.claw-icon {
+    font-size: 60px;
+    display: block;
+    margin-bottom: 10px;
+    animation: roarShake 4s infinite; /* Pequeno tremor imitando um rugido */
+}
+
+.jurassic-title {
+    font-size: 28px;
+    line-height: 1.1;
+    color: var(--text-main);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+}
+
+.jurassic-title span {
+    font-size: 64px;
+    font-weight: 900;
+    color: var(--accent-primary);
+    text-shadow: 4px 4px 0px #064e3b, 8px 8px 20px rgba(0,0,0,0.8);
+    letter-spacing: 5px;
+    display: inline-block;
+    transform: skewX(-8deg); /* Dá um visual veloz e agressivo */
+}
+
+.setup-subtitle {
+    color: var(--text-muted);
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 35px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 1;
+}
+
+.setup-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    position: relative;
+    z-index: 1;
+}
+
+.player-inputs {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(0,0,0,0.4);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px dashed var(--border-subtle);
+}
+
+.player-inputs .input-group {
+    margin-bottom: 0;
+    flex: 1;
+}
+
+.player-inputs input {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 15px;
+    background: #0f172a;
+    border-color: var(--border-subtle);
+}
+
+.player-inputs input:focus {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.vs-text {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--danger);
+    font-style: italic;
+    text-shadow: 0 4px 10px rgba(239, 68, 68, 0.5);
+}
+
+.settings-inputs {
+    display: flex;
+    gap: 20px;
+}
+
+.settings-inputs .input-group {
+    flex: 1;
+}
+
+/* O Botão Principal */
+.btn-start-radical {
+    margin-top: 30px;
+    background: var(--danger);
+    font-size: 22px;
+    padding: 20px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    box-shadow: 0 6px 0 #991b1b, 0 15px 25px rgba(0,0,0,0.5); /* Efeito 3D */
+    border-radius: 12px;
+    position: relative;
+    z-index: 1;
+    transition: all 0.1s ease; /* Transição super rápida para clique seco */
+}
+
+.btn-start-radical:hover {
+    background: #dc2626;
+    transform: translateY(2px);
+    box-shadow: 0 4px 0 #991b1b, 0 10px 15px rgba(0,0,0,0.5);
+}
+
+.btn-start-radical:active {
+    transform: translateY(6px); /* Afunda o botão */
+    box-shadow: 0 0 0 #991b1b, 0 5px 10px rgba(0,0,0,0.5);
+}
+
+/* Animação do dinossauro no título */
+@keyframes roarShake {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    5% { transform: scale(1.1) rotate(-5deg); }
+    10% { transform: scale(1.1) rotate(5deg); }
+    15% { transform: scale(1.1) rotate(-5deg); }
+    20% { transform: scale(1) rotate(0deg); }
+}
+
+/* Responsividade para celular não quebrar a tela nova */
+@media (max-width: 650px) {
+    .player-inputs, .settings-inputs { flex-direction: column; }
+    .vs-text { margin: 10px 0; transform: rotate(90deg); }
+    .jurassic-title span { font-size: 48px; }
+}
+
+/* --- Animações de Interação (Nomes e Botão Iniciar) --- */
+
+/* Pulso ao digitar o nome */
+/* Pulso ao digitar o nome (Versão Mais Forte) */
+@keyframes typePulse {
+    0% { 
+        box-shadow: 0 0 0 transparent; 
+        transform: scale(1); 
+        background-color: #0f172a;
+    }
+    30% { 
+        box-shadow: 0 0 30px var(--danger), inset 0 0 15px var(--danger); 
+        transform: scale(1.20); 
+        background-color: #450a0a; /* Flash vermelho no fundo da caixa */
+        border-color: var(--danger);
+        color: #fff;
+    }
+    100% { 
+        box-shadow: 0 0 0 transparent; 
+        transform: scale(1); 
+        background-color: #0f172a;
+    }
+}
+
+.input-typing {
+    animation: typePulse 0.4s ease-out;
+    /* Adiciona uma transição extra para garantir que o texto não pisque errado */
+    transition: background-color 0.1s; 
+}
+
+/* Efeito de Terremoto (Passos do T-Rex) */
+@keyframes earthquake {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    10% { transform: translate(-5px, -5px) rotate(-1deg); }
+    20% { transform: translate(5px, 5px) rotate(1deg); }
+    30% { transform: translate(-5px, 5px) rotate(-1deg); }
+    40% { transform: translate(5px, -5px) rotate(1deg); }
+    50% { transform: translate(-5px, -5px) rotate(-1deg); }
+    60% { transform: translate(5px, 5px) rotate(1deg); }
+    70% { transform: translate(-5px, 5px) rotate(-1deg); }
+    80% { transform: translate(5px, -5px) rotate(1deg); }
+    90% { transform: translate(-5px, -5px) rotate(-1deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+.modal-earthquake {
+    animation: earthquake 0.5s ease-in-out infinite;
+    border-color: var(--danger) !important;
+    box-shadow: 0 0 80px rgba(239, 68, 68, 0.6) !important;
+}
+
+/* Tela de setup "sendo engolida" ou atacada */
+@keyframes dramaticExit {
+    to {
+        opacity: 0;
+        transform: scale(1.5) translateY(50px);
+        filter: blur(10px);
+    }
+}
+
+.setup-exit {
+    animation: dramaticExit 0.6s cubic-bezier(0.5, 0, 0.2, 1) forwards;
+}

@@ -14,18 +14,33 @@ const screens = {
     win: document.getElementById('win-screen')
 };
 
-// Ao clicar em Começar Jogo
+// Adiciona o efeito de "pulso" sempre que o jogador digita uma letra
+['player1-name', 'player2-name'].forEach(id => {
+    const inputEl = document.getElementById(id);
+    if (inputEl) {
+        inputEl.addEventListener('input', () => {
+            // Remove e adiciona a classe rapidinho para reiniciar a animação
+            inputEl.classList.remove('input-typing');
+            void inputEl.offsetWidth; // Truque do JS para forçar o recarregamento do CSS
+            inputEl.classList.add('input-typing');
+        });
+    }
+});
+
+// Ao clicar em Começar Jogo com animação radical
 document.getElementById('btn-start').addEventListener('click', async () => {
     const name1 = document.getElementById('player1-name').value;
     const name2 = document.getElementById('player2-name').value;
     const count = parseInt(document.getElementById('card-count').value);
     const mode = document.getElementById('game-mode').value;
     const errorMsg = document.getElementById('setup-error');
+    const btnStart = document.getElementById('btn-start');
 
     if (!name1 || !name2) return errorMsg.innerText = "Preencha os nomes dos jogadores.";
     if (count % 2 !== 0 || count < 2) return errorMsg.innerText = "O número de cartas deve ser par e maior que 0.";
 
-    errorMsg.innerText = "Buscando cartas no banco de dados...";
+    errorMsg.innerText = "Preparando a arena...";
+    btnStart.disabled = true; // Impede que o jogador clique duas vezes
     
     try {
         const url = `http://localhost:3000/dinos/${mode}/${count}`;
@@ -36,6 +51,7 @@ document.getElementById('btn-start').addEventListener('click', async () => {
         const dinos = await response.json();
         
         if (dinos.length < count) {
+             btnStart.disabled = false;
              return errorMsg.innerText = `Só há ${dinos.length} dinos no banco. Reduza o número de cartas.`;
         }
 
@@ -46,12 +62,34 @@ document.getElementById('btn-start').addEventListener('click', async () => {
             else gameState.p2.deck.push(dino);
         });
 
-        // Configura nomes com as coroas
         document.getElementById('name-p1').innerHTML = `${gameState.p1.name} <span class="crown">👑</span>`;
         document.getElementById('name-p2').innerHTML = `<span class="crown">👑</span> ${gameState.p2.name}`;
 
-        startGame();
+        // --- INÍCIO DA ANIMAÇÃO ÉPICA ---
+        const setupModal = document.querySelector('.setup-modal');
+        setupModal.classList.add('modal-earthquake'); // Inicia o terremoto
+        btnStart.innerText = "RUGIDO!!!"; // Muda o texto do botão
+        btnStart.style.backgroundColor = "#7f1d1d"; // Fica um vermelho super escuro
+
+        // Espera 1.2 segundos de terremoto, depois explode a tela
+        setTimeout(() => {
+            setupModal.classList.remove('modal-earthquake');
+            screens.setup.classList.add('setup-exit'); // Dá o zoom in
+            
+            // Espera a animação de saída terminar para renderizar o jogo
+            setTimeout(() => {
+                startGame();
+                
+                // Limpa as classes para caso o jogador queira jogar de novo depois
+                screens.setup.classList.remove('setup-exit');
+                btnStart.innerText = "INICIAR BATALHA";
+                btnStart.disabled = false;
+                btnStart.style.backgroundColor = "";
+            }, 600); 
+        }, 1200); 
+
     } catch (err) {
+        btnStart.disabled = false;
         errorMsg.innerText = "Erro ao conectar com o servidor. Verifique se a API está rodando.";
         console.error(err);
     }
@@ -235,8 +273,39 @@ function resolveHand(attributeStr) {
 } // <--- O QUE FALTAVA: Fechamento da função resolveHand
 
 // Agora sim a função endGame fica separadinha e correta
+// Função de fim de jogo atualizada
 function endGame(winnerName) {
     screens.game.classList.remove('active');
     screens.win.classList.add('active');
     document.getElementById('winner-name').innerText = `${winnerName} Venceu!`;
+    
+    // Dispara a chuva de confetes
+    createConfetti();
+}
+
+// Criador de confetes
+function createConfetti() {
+    const colors = ['#10b981', '#fbbf24', '#ef4444', '#3b82f6', '#a855f7']; // Cores vivas
+    
+    for (let i = 0; i < 150; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        
+        // Posição horizontal aleatória
+        confetti.style.left = Math.random() * 100 + 'vw';
+        
+        // Cor aleatória da nossa lista
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        
+        // Tamanho levemente aleatório
+        const size = (Math.random() * 10 + 5) + 'px';
+        confetti.style.width = size;
+        confetti.style.height = size;
+        
+        // Tempo e velocidade de queda aleatórios para dar realismo
+        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        confetti.style.animationDelay = Math.random() * 2 + 's';
+        
+        document.body.appendChild(confetti);
+    }
 }

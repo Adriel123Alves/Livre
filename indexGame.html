@@ -8,27 +8,41 @@
 </head>
 <body>
 
-    <div id="setup-screen" class="screen active">
-        <div class="modal">
-            <h1>Super Trunfo Dinos</h1>
-            <div class="input-group">
-                <input type="text" id="player1-name" placeholder="Nome do Jogador 1" required>
+<div id="setup-screen" class="screen active">
+        <div class="modal setup-modal">
+            <div class="theme-header">
+                <span class="claw-icon">🦖</span>
+                <h1 class="jurassic-title">Super Trunfo<br><span>DINOS</span></h1>
             </div>
-            <div class="input-group">
-                <input type="text" id="player2-name" placeholder="Nome do Jogador 2" required>
+            <p class="setup-subtitle">Prepare-se para a Batalha Jurássica!</p>
+            
+            <div class="setup-grid">
+                <div class="player-inputs">
+                    <div class="input-group">
+                        <input type="text" id="player1-name" placeholder="Nome Jogador 1" required>
+                    </div>
+                    <span class="vs-text">VS</span>
+                    <div class="input-group">
+                        <input type="text" id="player2-name" placeholder="Nome Jogador 2" required>
+                    </div>
+                </div>
+                
+                <div class="settings-inputs">
+                    <div class="input-group">
+                        <label for="card-count">Total de cartas (par):</label>
+                        <input type="number" id="card-count" value="10" min="2" step="2" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="game-mode">Modo de Jogo:</label>
+                        <select id="game-mode">
+                            <option value="random">Dinos Aleatórios</option>
+                            <option value="famosos">Os Mais Famosos</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-            <div class="input-group">
-                <label for="card-count">Total de cartas no jogo (par):</label>
-                <input type="number" id="card-count" value="10" min="2" step="2" required>
-            </div>
-            <div class="input-group">
-                <label for="game-mode">Modo de Jogo:</label>
-                <select id="game-mode">
-                    <option value="random">Dinossauros Aleatórios</option>
-                    <option value="famosos">Os Mais Famosos</option>
-                </select>
-            </div>
-            <button id="btn-start">Começar Jogo</button>
+            
+            <button id="btn-start" class="btn-start-radical">INICIAR BATALHA</button>
             <p id="setup-error" class="error-msg"></p>
         </div>
     </div>
@@ -63,10 +77,12 @@
     </div>
 
     <div id="win-screen" class="screen">
-        <div class="modal">
-            <h1>Fim de Jogo!</h1>
+        <div class="modal win-modal">
+            <div class="trophy">🏆</div>
+            <h1 class="win-title">Vitória!</h1>
             <h2 id="winner-name">Jogador X Venceu!</h2>
-            <button onclick="location.reload()">Jogar Novamente</button>
+            <p class="win-subtitle">O maior mestre dos dinossauros!</p>
+            <button onclick="location.reload()" class="btn-play-again">Jogar Novamente</button>
         </div>
     </div>
 
