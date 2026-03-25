@@ -923,7 +923,7 @@ header h2 { margin: 0 0 10px 0; }
 .sneaky-dino-head {
     position: fixed; 
     font-size: clamp(12rem, 25vw, 25rem); /* Tamanho responsivo: gigante no PC, ajustado no celular */
-    z-index: 1; 
+    z-index: 11; 
     pointer-events: none; 
     filter: drop-shadow(0 0 15px rgba(0,0,0,0.5));
     

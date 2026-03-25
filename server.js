@@ -51,7 +51,7 @@ app.get('/dinos/random/:n', async (req, res) => {
     const limit = parseInt(n, 10);
     
     if (isNaN(limit) || limit <= 0) {
-        return res.status(400).json({ error: 'Por favor, forneça um número válido maior que zero.' });
+        return res.status(400).json({ error: 'Por favor, o parametro deve ser um número válido maior que zero.' });
     }
 
     try {
@@ -78,7 +78,7 @@ app.get('/dinos/famosos/:n', async (req, res) => {
     const limit = parseInt(n, 10);
     
     if (isNaN(limit) || limit <= 0) {
-        return res.status(400).json({ error: 'Por favor, forneça um número válido maior que zero.' });
+        return res.status(400).json({ error: 'Por favor, o parametro deve ser um número válido maior que zero.' });
     }
 
     try {

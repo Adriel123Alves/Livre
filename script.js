@@ -405,6 +405,10 @@ iniciarChuvaDeDinos();
    DINOSSAURO SORRATEIRO (Girando antes de aterrissar)
    ========================================= */
 
+/* =========================================
+   DINOSSAURO SORRATEIRO (Girando + Margem Segura)
+   ========================================= */
+
 function iniciarDinoSorrateiro() {
     const dinoElement = document.querySelector('.sneaky-dino-head');
     if (!dinoElement) return;
@@ -425,67 +429,75 @@ function iniciarDinoSorrateiro() {
         const dinoSorteado = listaDinos[Math.floor(Math.random() * listaDinos.length)];
         dinoElement.innerText = dinoSorteado;
 
-        // 3. Sorteia a parede e a posição
+        // 3. Sorteia a parede
         const paredeSorteada = paredes[Math.floor(Math.random() * paredes.length)];
-        const posicaoAleatoria = Math.floor(Math.random() * 60) + 20; 
 
-        // --- MÁGICA DO GIRO ---
-        // Sorteia de 1 a 3 voltas completas (360, 720 ou 1080 graus)
+        // --- MÁGICA DOS CANTOS SEGUROS ---
+        // Em vez de porcentagem cega, calculamos pixels com base no tamanho da tela
+        const margemSegura = 250; // Distância mínima dos cantos em pixels (ajuste se precisar)
+        let posX, posY;
+
+        // Se for no teto ou no chão, limita a posição horizontal (X)
+        if (paredeSorteada === 'top' || paredeSorteada === 'bottom') {
+            let larguraMax = window.innerWidth - (margemSegura * 1.5);
+            if (larguraMax < margemSegura) larguraMax = margemSegura; // Proteção para telas pequenas
+            posX = Math.floor(Math.random() * (larguraMax - margemSegura)) + margemSegura;
+        } 
+        // Se for nas laterais, limita a posição vertical (Y)
+        else {
+            let alturaMax = window.innerHeight - (margemSegura * 1.5);
+            if (alturaMax < margemSegura) alturaMax = margemSegura; // Proteção para telas pequenas
+            posY = Math.floor(Math.random() * (alturaMax - margemSegura)) + margemSegura;
+        }
+
+        // 4. Mágica do giro
         const voltas = (Math.floor(Math.random() * 3) + 1) * 360; 
-        // Sorteia se vai girar para a direita ou esquerda
         const direcao = Math.random() > 0.5 ? 1 : -1; 
         const giro = voltas * direcao;
 
         let transformEscondido, transformVisivel;
 
-        // 4. Aplica o ângulo de giro EXTRA na posição escondida
+        // 5. Aplica a posição exata em pixels (px) e o ângulo
         if (paredeSorteada === 'bottom') {
             dinoElement.style.bottom = '-50px';
-            dinoElement.style.left = posicaoAleatoria + '%';
-            // Ele começa girado e termina no ângulo 0
+            dinoElement.style.left = posX + 'px';
             transformEscondido = `translateY(100%) rotate(${0 + giro}deg)`; 
             transformVisivel = `translateY(20px) rotate(0deg)`;
             
         } else if (paredeSorteada === 'top') {
             dinoElement.style.top = '-50px';
-            dinoElement.style.left = posicaoAleatoria + '%';
-            // Termina no 180, então começa no 180 + giro
+            dinoElement.style.left = posX + 'px';
             transformEscondido = `translateY(-100%) rotate(${180 + giro}deg)`; 
             transformVisivel = `translateY(-20px) rotate(180deg)`;
             
         } else if (paredeSorteada === 'left') {
             dinoElement.style.left = '-50px';
-            dinoElement.style.top = posicaoAleatoria + '%';
-            // Termina no 90, então começa no 90 + giro
+            dinoElement.style.top = posY + 'px';
             transformEscondido = `translateX(-100%) rotate(${90 + giro}deg)`; 
             transformVisivel = `translateX(-20px) rotate(90deg)`;
             
         } else if (paredeSorteada === 'right') {
             dinoElement.style.right = '-50px';
-            dinoElement.style.top = posicaoAleatoria + '%';
-            // Termina no -90, então começa no -90 + giro
+            dinoElement.style.top = posY + 'px';
             transformEscondido = `translateX(100%) rotate(${-90 + giro}deg)`; 
             transformVisivel = `translateX(20px) rotate(-90deg)`;
         }
 
-        // Prepara a posição inicial (escondida e muito girada)
         dinoElement.style.transform = transformEscondido;
+        void dinoElement.offsetWidth; // Força registro
 
-        // Força o navegador a registrar
-        void dinoElement.offsetWidth;
-
-        // 5. Entra em cena! O CSS faz o trabalho de "desenrolar" o giro
+        // 6. Anima a entrada
         dinoElement.style.transition = 'transform 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1.5s ease';
         dinoElement.style.opacity = '1';
         dinoElement.style.transform = transformVisivel;
 
-        // 6. Esconde o dinossauro (ele recua girando de volta para a sombra)
+        // 7. Esconde
         setTimeout(() => {
             dinoElement.style.opacity = '0';
             dinoElement.style.transform = transformEscondido;
         }, 3000);
 
-        // 7. Prepara o próximo
+        // 8. Próximo
         const proximoSusto = Math.random() * 4000 + 4000;
         setTimeout(espiar, proximoSusto);
     }
