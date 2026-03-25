@@ -906,3 +906,56 @@ header h2 { margin: 0 0 10px 0; }
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* =========================================
+   DINOSSAURO SORRATEIRO (Emoji Giant Peek)
+   ========================================= */
+
+/* =========================================
+   DINOSSAURO SORRATEIRO (Aleatório)
+   ========================================= */
+
+.setup-modal {
+    position: relative;
+    z-index: 10; 
+}
+
+.sneaky-dino-head {
+    position: fixed; 
+    font-size: clamp(12rem, 25vw, 25rem); /* Tamanho responsivo: gigante no PC, ajustado no celular */
+    z-index: 1; 
+    pointer-events: none; 
+    filter: drop-shadow(0 0 15px rgba(0,0,0,0.5));
+    
+    /* A transição suave de aparecer e sumir */
+    transition: transform 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1.5s ease;
+    opacity: 0; 
+}
+
+/* Animação: Subir, encarar e sumir */
+@keyframes sneakyPeak {
+    0% { 
+        /* Escondido abaixo da borda da tela */
+        transform: translateY(100px); 
+        opacity: 0; 
+    }
+    15% { 
+        /* Sobe aparecendo */
+        transform: translateY(0); 
+        opacity: 1; 
+    }
+    45% { 
+        /* Fica "encarando" sorrateiramente */
+        transform: translateY(0); 
+        opacity: 1; 
+    }
+    60% { 
+        /* Recua sorrateiramente */
+        transform: translateY(100px); 
+        opacity: 0; 
+    }
+    100% { 
+        transform: translateY(100px); 
+        opacity: 0; 
+    }
+}

@@ -9,43 +9,45 @@
 <body>
 
 <div id="setup-screen" class="screen active">
-        <div class="modal setup-modal">
-            <div class="theme-header">
-                <span class="claw-icon">🦖</span>
-                <h1 class="jurassic-title">Super Trunfo<br><span>DINOS</span></h1>
-            </div>
-            <p class="setup-subtitle">Prepare-se para a Batalha Jurássica!</p>
-            
-            <div class="setup-grid">
-                <div class="player-inputs">
-                    <div class="input-group">
-                        <input type="text" id="player1-name" placeholder="Nome Jogador 1" required>
-                    </div>
-                    <span class="vs-text">VS</span>
-                    <div class="input-group">
-                        <input type="text" id="player2-name" placeholder="Nome Jogador 2" required>
-                    </div>
-                </div>
-                
-                <div class="settings-inputs">
-                    <div class="input-group">
-                        <label for="card-count">Total de cartas (par):</label>
-                        <input type="number" id="card-count" value="10" min="2" step="2" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="game-mode">Modo de Jogo:</label>
-                        <select id="game-mode">
-                            <option value="random">Dinos Aleatórios</option>
-                            <option value="famosos">Os Mais Famosos</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            
-            <button id="btn-start" class="btn-start-radical">INICIAR BATALHA</button>
-            <p id="setup-error" class="error-msg"></p>
+    <div class="sneaky-dino-head">🦖</div>
+
+    <div class="modal setup-modal">
+        <div class="theme-header">
+            <span class="claw-icon">🦖</span>
+            <h1 class="jurassic-title">Super Trunfo<br><span>DINOS</span></h1>
         </div>
+        <p class="setup-subtitle">Prepare-se para a Batalha Jurássica!</p>
+        
+        <div class="setup-grid">
+            <div class="player-inputs">
+                <div class="input-group">
+                    <input type="text" id="player1-name" placeholder="Nome Jogador 1" required>
+                </div>
+                <span class="vs-text">VS</span>
+                <div class="input-group">
+                    <input type="text" id="player2-name" placeholder="Nome Jogador 2" required>
+                </div>
+            </div>
+            
+            <div class="settings-inputs">
+                <div class="input-group">
+                    <label for="card-count">Total de cartas (par):</label>
+                    <input type="number" id="card-count" value="10" min="2" step="2" required>
+                </div>
+                <div class="input-group">
+                    <label for="game-mode">Modo de Jogo:</label>
+                    <select id="game-mode">
+                        <option value="random">Dinos Aleatórios</option>
+                        <option value="famosos">Os Mais Famosos</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <button id="btn-start" class="btn-start-radical">INICIAR BATALHA</button>
+        <p id="setup-error" class="error-msg"></p>
     </div>
+</div>
 
     <div id="game-screen" class="screen">
         <header>
