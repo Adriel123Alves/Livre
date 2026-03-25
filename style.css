@@ -18,12 +18,21 @@ body {
     margin: 0;
     font-family: 'Inter', sans-serif;
     background-color: var(--bg-main);
-    /* Novo fundo com gradiente e grade sutil */
+    
+    /* Fundo Selvagem: Névoa Jurássica + Grade Diagonal (Escamas/Cerca) */
     background-image: 
-        radial-gradient(circle at 50% 0%, #1e293b 0%, transparent 70%),
-        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-    background-size: 100% 100%, 40px 40px, 40px 40px;
+        /* 1. Névoa superior esquerda (verde musgo denso) */
+        radial-gradient(circle at 0% 0%, rgba(26, 71, 42, 0.4) 0%, transparent 60%),
+        /* 2. Névoa inferior direita (verde pântano sutil) */
+        radial-gradient(circle at 100% 100%, rgba(46, 139, 87, 0.15) 0%, transparent 60%),
+        /* 3. Escurecimento na base simulando o chão escuro da selva */
+        radial-gradient(circle at 50% 100%, rgba(0, 0, 0, 0.6) 0%, transparent 80%),
+        /* 4. Textura diagonal (Substitui a grade reta antiga) */
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 40px),
+        repeating-linear-gradient(-45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 40px);
+        
+    /* Removemos o background-size antigo pois o repeating-linear-gradient já cuida do tamanho */
+    
     color: var(--text-main);
     display: flex;
     justify-content: center;
@@ -958,4 +967,9 @@ header h2 { margin: 0 0 10px 0; }
         transform: translateY(100px); 
         opacity: 0; 
     }
+}
+
+/* Dica Bônus: Para a carta "saltar" mais nesse fundo escuro */
+.card-scene {
+    filter: drop-shadow(0px 15px 20px rgba(0, 0, 0, 0.6));
 }

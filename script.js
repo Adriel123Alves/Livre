@@ -414,7 +414,7 @@ function iniciarDinoSorrateiro() {
     if (!dinoElement) return;
 
     const paredes = ['top', 'bottom', 'left', 'right'];
-    const listaDinos = ['🦖', '🦕', '🦣', '🐊'];
+    const listaDinos = ['🦖', '🦕', '🦣'];
 
     function espiar() {
         // 1. Reseta o elemento
