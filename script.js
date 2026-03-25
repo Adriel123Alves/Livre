@@ -111,6 +111,11 @@ function startGame() {
     screens.setup.classList.remove('active');
     screens.game.classList.add('active');
     renderRound();
+    // Adicione isso logo após o jogador clicar em Iniciar
+    const rain = document.getElementById('dino-rain-container');
+    if (rain) {
+        rain.remove(); // Para a chuva quando o jogo começa!
+    }
 }
 
 function renderRound() {
@@ -345,3 +350,52 @@ function updateTugOfWar() {
     document.getElementById('score-p1').innerText = p1Cards;
     document.getElementById('score-p2').innerText = p2Cards;
 }
+
+function iniciarChuvaDeDinos() {
+    // Cria o contêiner da chuva e adiciona ao body
+    const rainContainer = document.createElement('div');
+    rainContainer.id = 'dino-rain-container';
+    document.body.appendChild(rainContainer);
+
+    const dinos = ['🦖', '🦕']; // Emojis que vão chover
+    const numDinos = 30; // Quantidade de dinossauros caindo ao mesmo tempo
+
+    for (let i = 0; i < numDinos; i++) {
+        const dino = document.createElement('div');
+        dino.classList.add('dino-drop');
+        
+        // Sorteia entre o T-Rex e o Braquiossauro
+        dino.innerText = dinos[Math.floor(Math.random() * dinos.length)];
+        
+        // Posição horizontal aleatória (0% a 100% da tela)
+        dino.style.left = Math.random() * 100 + 'vw';
+        
+        // Tamanho aleatório (entre 20px e 50px)
+        const size = Math.random() * 30 + 20; 
+        dino.style.fontSize = size + 'px';
+        
+        // Tempo de queda aleatório (entre 4s e 10s) para não caírem juntos
+        const fallDuration = Math.random() * 6 + 4; 
+        
+        // Tempo do giro aleatório (entre 2s e 5s)
+        const spinDuration = Math.random() * 3 + 2; 
+        
+        // Atraso aleatório para iniciar a queda (para a chuva ser constante)
+        const delay = Math.random() * 5; 
+        
+        // Aplica os tempos no CSS do elemento
+        dino.style.animationDuration = `${fallDuration}s, ${spinDuration}s`;
+        dino.style.animationDelay = `${delay}s, ${delay}s`;
+        
+        // Se quiser que alguns girem no sentido contrário:
+        if (Math.random() > 0.5) {
+            dino.style.animationDirection = 'normal, reverse';
+        }
+        
+        rainContainer.appendChild(dino);
+    }
+}
+
+// Chame a função quando o jogo carregar
+// Se você já tem um window.onload, coloque apenas a chamada iniciarChuvaDeDinos(); dentro dele.
+iniciarChuvaDeDinos();

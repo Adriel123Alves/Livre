@@ -208,15 +208,25 @@ header h2 { margin: 0 0 10px 0; }
     letter-spacing: 1px;
 }
 
+/* Contêiner da imagem na carta */
 .card-front .img-container { 
-    height: 50px; 
-    background-color: #999999; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
+    height: 140px; /* Aumentamos a altura para a imagem ter um espaço decente */
+    background-color: var(--bg-main); /* Cor de fundo caso a imagem demore a carregar */
     border-bottom: 2px solid var(--accent-primary);
+    overflow: hidden; /* Garante que as bordas da imagem não vazem do contêiner */
+    display: block; 
 }
-.card-front .img-container img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
+
+/* A imagem em si */
+.card-front .img-container img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; /* A MÁGICA: Preenche o espaço sem esticar ou espremer a imagem */
+    object-position: center; /* Foca no centro da imagem ao fazer o recorte */
+    display: block;
+    opacity: 0.9; 
+    transition: transform 0.3s ease; /* Bônus: transição suave se você quiser adicionar um hover depois */
+}
 
 .card-front .type-badge { 
     background-color: var(--accent-primary); 
@@ -727,4 +737,172 @@ header h2 { margin: 0 0 10px 0; }
 .stat-name {
     display: flex;
     align-items: center;
+}
+
+/* =========================================
+   RESPONSIVIDADE GERAL (Media Queries)
+   ========================================= */
+
+/* --- Tablets e Telas Médias (Até 768px) --- */
+@media (max-width: 768px) {
+    /* Muda o tabuleiro de lado-a-lado para empilhado (Cima/Baixo) */
+    .board {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* Ajusta a arena central para não ocupar espaço desnecessário */
+    .center-arena {
+        min-width: auto;
+        margin: 10px 0;
+        flex-direction: row; /* Coloca o VS e botões lado a lado se possível */
+        flex-wrap: wrap;
+    }
+
+    #vs-badge {
+        font-size: 24px;
+    }
+
+    /* Reduz levemente o tamanho das cartas */
+    .card-scene {
+        width: 250px;
+        height: 375px;
+    }
+
+    /* Ajusta a barra de progresso (Cabo de Guerra) */
+    .tug-of-war-container {
+        padding: 10px 15px;
+        gap: 10px;
+    }
+    
+    .score-p1, .score-p2 {
+        font-size: 20px;
+    }
+}
+
+/* --- Celulares e Telas Pequenas (Até 480px) --- */
+@media (max-width: 480px) {
+    /* Alinha o body ao topo para evitar que o conteúdo suma em telas muito curtas */
+    body {
+        align-items: flex-start;
+        padding: 15px 0;
+    }
+
+    .screen {
+        padding: 10px;
+    }
+
+    /* Reduz paddings e margens do cabeçalho */
+    header {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    header h2 {
+        font-size: 20px;
+    }
+
+    #game-status {
+        font-size: 16px;
+    }
+
+    /* Encolhe as cartas para caberem perfeitamente na tela do celular */
+    .card-scene {
+        width: 220px;
+        height: 330px;
+    }
+
+    /* Ajusta os textos de dentro da carta para não vazarem */
+    .card-front h4 {
+        font-size: 16px;
+        padding: 10px 5px;
+    }
+
+    .attributes li {
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+
+    /* Ajusta os modais de setup e vitória */
+    .modal {
+        padding: 25px 15px;
+    }
+
+    .setup-modal {
+        border-width: 2px;
+    }
+
+    /* Remove o enfeite de fundo que pode causar scroll horizontal no celular */
+    .setup-modal::before {
+        display: none; 
+    }
+
+    .jurassic-title span {
+        font-size: 36px; /* Evita que o título quebre a tela */
+        letter-spacing: 2px;
+    }
+
+    .btn-start-radical {
+        font-size: 18px;
+        padding: 15px;
+    }
+    
+    .win-title {
+        font-size: 28px;
+    }
+}
+
+/* --- Telas muito baixas (Modo Paisagem no celular) --- */
+@media (max-height: 600px) {
+    body {
+        align-items: flex-start;
+    }
+    .card-scene {
+        transform: scale(0.85); /* Reduz tudo visualmente sem quebrar o layout */
+        transform-origin: top center;
+    }
+}
+
+/* =========================================
+   CHUVA DE DINOSSAUROS (Tela de Setup)
+   ========================================= */
+
+/* O contêiner da chuva fica fixo no fundo e atrás de tudo */
+#dino-rain-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* Impede que os dinos atrapalhem o clique nos botões */
+    z-index: 0; /* Fica lá no fundo */
+    overflow: hidden;
+}
+
+/* Garante que a modal de setup fique na frente da chuva */
+.setup-modal {
+    position: relative;
+    z-index: 10; 
+}
+
+/* O estilo de cada dinossauro caindo */
+.dino-drop {
+    position: absolute;
+    top: -10%; /* Esconde o dino acima da tela antes de cair */
+    opacity: 0.4; /* Deixa meio transparente para não distrair muito */
+    /* Duas animações rodando juntas: cair e girar */
+    animation: fall linear infinite, spin linear infinite;
+    filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.5)); /* Brilho verde sutil */
+}
+
+/* Animação: Despencar de cima para baixo */
+@keyframes fall {
+    0% { top: -10%; }
+    100% { top: 110%; }
+}
+
+/* Animação: Girar como um peão */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
