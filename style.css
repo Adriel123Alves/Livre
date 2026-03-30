@@ -1,8 +1,24 @@
-/* Importando uma fonte moderna do Google Fonts */
+/* =========================================
+   ÍNDICE
+   1. Fontes e Variáveis
+   2. Base e Layout Geral
+   3. Utilidades
+   4. Inputs e Botões
+   5. Arena do Jogo (Header, Placar, Cabo de Guerra)
+   6. Sistema de Cartas
+   7. Modais (Geral, Setup, Vitória)
+   8. Efeitos Temáticos Extras
+   9. Animações (@keyframes)
+   10. Responsividade (@media)
+   ========================================= */
+
+/* =========================================
+   1. FONTES E VARIÁVEIS
+   ========================================= */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
 
 :root {
-    /* Nova Paleta Dark & Modern */
+    /* Paleta Dark & Modern */
     --bg-main: #0f172a;       /* Fundo geral (Azul muito escuro) */
     --bg-card: #1e293b;       /* Fundo das cartas (Azul acinzentado escuro) */
     --bg-panel: #1e293b;      /* Fundo de modais e painéis */
@@ -14,49 +30,63 @@
     --danger: #ef4444;        /* Vermelho para erros */
 }
 
+/* =========================================
+   2. BASE E LAYOUT GERAL
+   ========================================= */
 body {
     margin: 0;
     font-family: 'Inter', sans-serif;
-    background-color: var(--bg-main);
+    background-color: #050a05;
     
-    /* Fundo Selvagem: Névoa Jurássica + Grade Diagonal (Escamas/Cerca) */
+    /* Fundo Selvagem: Densidade, Umidade e Caos */
     background-image: 
-        /* 1. Névoa superior esquerda (verde musgo denso) */
-        radial-gradient(circle at 0% 0%, rgba(26, 71, 42, 0.4) 0%, transparent 60%),
-        /* 2. Névoa inferior direita (verde pântano sutil) */
-        radial-gradient(circle at 100% 100%, rgba(46, 139, 87, 0.15) 0%, transparent 60%),
-        /* 3. Escurecimento na base simulando o chão escuro da selva */
-        radial-gradient(circle at 50% 100%, rgba(0, 0, 0, 0.6) 0%, transparent 80%),
-        /* 4. Textura diagonal (Substitui a grade reta antiga) */
-        repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 40px),
-        repeating-linear-gradient(-45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 40px);
-        
-    /* Removemos o background-size antigo pois o repeating-linear-gradient já cuida do tamanho */
+        radial-gradient(circle at 20% 10%, rgba(34, 139, 34, 0.15), transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(0, 100, 0, 0.2), transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(95deg, transparent 10%, rgba(15, 10, 5, 0.9) 12%, rgba(26, 18, 10, 0.9) 15%, transparent 18%),
+        linear-gradient(82deg, transparent 40%, rgba(10, 15, 10, 0.8) 45%, rgba(5, 10, 5, 0.8) 50%, transparent 55%),
+        linear-gradient(100deg, transparent 75%, rgba(20, 15, 10, 0.9) 78%, rgba(10, 5, 0, 0.9) 82%, transparent 85%),
+        repeating-radial-gradient(circle at center, rgba(0,0,0,0) 0, rgba(0,0,0,0.1) 100px),
+        radial-gradient(ellipse at 50% 90%, rgba(20, 40, 20, 0.4) 0%, transparent 70%),
+        linear-gradient(to bottom, transparent 20%, rgba(0, 0, 0, 0.9) 95%);
+    background-size: 100% 100%, 40px 40px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
     
-    color: var(--text-main);
+    color: #e0eee0;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    box-shadow: inset 0 0 150px rgba(0,0,0,0.9);
+    overflow: hidden;
 }
 
-.screen { display: none; width: 100%; max-width: 1000px; padding: 20px; box-sizing: border-box; }
+/* Efeito de "Pulso" na selva */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.3));
+    pointer-events: none;
+}
+
+.screen { 
+    display: none; 
+    width: 100%; 
+    max-width: 1000px; 
+    padding: 20px; 
+    box-sizing: border-box; 
+}
 .screen.active { display: block; }
 
-/* Modais e Painéis */
-.modal {
-    background-color: var(--bg-panel);
-    padding: 40px 30px;
-    border-radius: 16px; /* Cantos mais arredondados */
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); /* Sombra mais profunda */
-    text-align: center;
-    max-width: 400px;
-    margin: 0 auto;
-    border: 1px solid var(--border-subtle);
-}
+/* =========================================
+   3. UTILIDADES
+   ========================================= */
+.hidden { display: none !important; }
+.error-msg { color: var(--danger); font-size: 14px; margin-top: 15px; min-height: 20px;}
 
-.modal h1 { margin-top: 0; color: var(--accent-primary); }
-
+/* =========================================
+   4. INPUTS E BOTÕES
+   ========================================= */
 .input-group { margin-bottom: 20px; text-align: left; }
 .input-group label { display: block; margin-bottom: 8px; font-size: 14px; color: var(--text-muted); font-weight: 600; }
 .input-group input, .input-group select {
@@ -77,7 +107,11 @@ body {
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
 }
 
-/* Botões Modernos */
+.input-typing {
+    animation: typePulse 0.4s ease-out;
+    transition: background-color 0.1s; 
+}
+
 button {
     background-color: var(--accent-primary);
     color: #fff;
@@ -93,14 +127,31 @@ button {
 }
 button:hover { 
     background-color: var(--accent-hover); 
-    transform: translateY(-2px); /* Efeito de levantar */
+    transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
 }
 
-.error-msg { color: var(--danger); font-size: 14px; margin-top: 15px; min-height: 20px;}
-.hidden { display: none !important; }
+.action-area {
+    min-height: 50px;
+    display: flex;
+    justify-content: center;
+}
 
-/* Cabeçalho do Jogo */
+.fade-btn {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(15px);
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+}
+.fade-btn.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* =========================================
+   5. ARENA DO JOGO
+   ========================================= */
 header { 
     text-align: center; 
     background-color: var(--bg-panel); 
@@ -118,162 +169,6 @@ header h2 { margin: 0 0 10px 0; }
 .player-area h3 { margin-bottom: 5px; color: var(--text-main); }
 .player-area p { margin-top: 0; color: var(--text-muted); font-size: 14px; }
 
-/* 3D Flip Card - Melhorias visuais */
-/* 3D Flip Card - Melhorias visuais e Animação de Entrada */
-.card-scene {
-    width: 280px;
-    height: 420px;
-    perspective: 1000px; 
-    
-    /* Novas propriedades para a animação de entrada */
-    opacity: 0;
-    transform: translateY(30px) scale(0.95);
-    animation: cardEnter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-}
-
-/* Animação quando as cartas NOVAS entram */
-@keyframes cardEnter {
-    to { 
-        opacity: 1; 
-        transform: translateY(0) scale(1); 
-    }
-}
-
-/* Animação quando as cartas VELHAS saem */
-.card-scene.exit {
-    animation: cardExit 0.4s ease forwards;
-}
-
-@keyframes cardExit {
-    to { 
-        opacity: 0; 
-        transform: scale(0.9) translateY(-20px); 
-    }
-}
-
-.card-inner {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1); /* Curva de animação mais realista */
-    transform-style: preserve-3d; 
-}
-
-.card-inner.flipped {
-    transform: rotateY(180deg);
-}
-
-.card-front, .card-back {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    backface-visibility: hidden; 
-    border-radius: 16px; /* Cantos mais suaves */
-    box-shadow: 0 15px 35px rgba(0,0,0,0.5); /* Sombra pesada para destacar do fundo */
-    overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.1); /* Borda "glass" super sutil */
-}
-
-/* Frente da Carta */
-.card-front {
-    transform: rotateY(180deg); 
-    background-color: var(--bg-card);
-    display: flex;
-    flex-direction: column;
-}
-
-/* Verso da Carta (Estampa Moderna) */
-.card-back {
-    background-color: var(--bg-panel);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* Padrão de bolinhas escuro e moderno */
-    background-image: radial-gradient(var(--border-subtle) 2px, transparent 2px);
-    background-size: 20px 20px;
-}
-
-.card-back::after {
-    content: "SUPER TRUNFO";
-    color: var(--accent-primary);
-    font-size: 28px;
-    font-weight: 800;
-    text-align: center;
-    transform: rotate(-45deg);
-    display: block;
-    background-color: rgba(15, 23, 42, 0.8);
-    padding: 10px 20px;
-    border-radius: 8px;
-    border: 2px solid var(--accent-primary);
-}
-
-/* Conteúdo Interno da Carta */
-.card-front h4 { 
-    margin: 0; 
-    padding: 15px 10px; 
-    background-color: rgba(0,0,0,0.2); 
-    font-size: 20px; 
-    text-align: center; 
-    letter-spacing: 1px;
-}
-
-/* Contêiner da imagem na carta */
-.card-front .img-container { 
-    height: 140px; /* Aumentamos a altura para a imagem ter um espaço decente */
-    background-color: var(--bg-main); /* Cor de fundo caso a imagem demore a carregar */
-    border-bottom: 2px solid var(--accent-primary);
-    overflow: hidden; /* Garante que as bordas da imagem não vazem do contêiner */
-    display: block; 
-}
-
-/* A imagem em si */
-.card-front .img-container img { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: cover; /* A MÁGICA: Preenche o espaço sem esticar ou espremer a imagem */
-    object-position: center; /* Foca no centro da imagem ao fazer o recorte */
-    display: block;
-    opacity: 0.9; 
-    transition: transform 0.3s ease; /* Bônus: transição suave se você quiser adicionar um hover depois */
-}
-
-.card-front .type-badge { 
-    background-color: var(--accent-primary); 
-    color: var(--bg-main); 
-    font-size: 11px; 
-    text-align: center; 
-    padding: 4px; 
-    font-weight: 800; 
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
-
-/* Atributos - Lista Limpa */
-.attributes { list-style: none; padding: 0; margin: 0; flex-grow: 1; display: flex; flex-direction: column; }
-.attributes li {
-    padding: 10px 20px;
-    border-bottom: 1px solid var(--border-subtle);
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-muted);
-}
-.attributes li span { color: var(--text-main); font-weight: 800;}
-.attributes li:last-child { border-bottom: none; }
-
-/* Hover nos atributos APENAS quando for a vez do jogador */
-.card-inner.flipped .attributes li { cursor: pointer; transition: all 0.2s ease; }
-.card-inner.flipped .attributes li:hover { 
-    background-color: var(--border-subtle); 
-    color: #fff; 
-    padding-left: 25px; /* Pequeno empurrãozinho para a direita no hover */
-}
-.card-inner.flipped .attributes li:hover span { color: var(--accent-primary); }
-
-/* --- Melhorias de Interface (UI) --- */
-
-/* Arena Central */
 .center-arena {
     display: flex;
     flex-direction: column;
@@ -292,7 +187,6 @@ header h2 { margin: 0 0 10px 0; }
     letter-spacing: 2px;
 }
 
-/* Informação do Baralho (Placar) */
 .deck-info {
     background: rgba(0,0,0,0.2);
     padding: 8px 16px;
@@ -304,10 +198,8 @@ header h2 { margin: 0 0 10px 0; }
     border: 1px solid var(--border-subtle);
     transition: all 0.4s ease;
 }
-
 .deck-info span { font-weight: 800; color: var(--text-main); }
 
-/* Destaque para quem está vencendo (Mais cartas) */
 .player-area.winning .deck-info {
     border-color: var(--accent-primary);
     background: rgba(16, 185, 129, 0.1);
@@ -316,352 +208,13 @@ header h2 { margin: 0 0 10px 0; }
 }
 .player-area.winning .deck-info span { color: var(--accent-primary); }
 
-/* Coroa Animada */
-.crown {
-    display: none;
-    font-size: 20px;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-}
-
+.crown { display: none; font-size: 20px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
 .player-area.winning .crown {
     display: inline-block;
     animation: floatCrown 2s ease-in-out infinite;
 }
 
-@keyframes floatCrown {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-5px) rotate(10deg); }
-}
-
-/* Botão com Fade-in (Corrigido) */
-.action-area {
-    min-height: 50px; /* Garante que o espaço do botão exista para não dar pulos na tela */
-    display: flex;
-    justify-content: center;
-}
-
-.fade-btn {
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(15px);
-    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
-}
-
-.fade-btn.show {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-/* --- Tela de Vitória Animada --- */
-.win-modal {
-    background: linear-gradient(135deg, var(--bg-panel), #0f172a);
-    border: 2px solid var(--accent-primary);
-    box-shadow: 0 0 50px rgba(16, 185, 129, 0.4);
-    transform: scale(0.8);
-    opacity: 0;
-    /* Animação que faz a janela "pular" para a tela */
-    animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-.trophy {
-    font-size: 80px;
-    margin-bottom: 10px;
-    /* Troféu flutuando e piscando dourado */
-    animation: floatTrophy 2s ease-in-out infinite, glowTrophy 1.5s alternate infinite;
-}
-
-.win-title {
-    font-size: 36px;
-    color: var(--accent-primary);
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    margin-bottom: 5px;
-    text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-}
-
-.win-subtitle {
-    color: var(--text-muted);
-    margin-bottom: 30px;
-    font-style: italic;
-}
-
-.btn-play-again {
-    font-size: 18px;
-    padding: 16px 32px;
-    background: linear-gradient(45deg, var(--accent-primary), #059669);
-    box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
-    animation: pulseBtn 2s infinite; /* Botão chamando para clicar */
-}
-
-/* Confetes da Vitória */
-.confetti {
-    position: fixed;
-    top: -20px;
-    width: 10px;
-    height: 10px;
-    z-index: 9999;
-    pointer-events: none; /* Para não atrapalhar o clique no botão */
-    animation: fall linear forwards;
-}
-
-/* Keyframes das Animações */
-@keyframes popIn {
-    to { transform: scale(1); opacity: 1; }
-}
-
-@keyframes floatTrophy {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-15px) scale(1.1); }
-}
-
-@keyframes glowTrophy {
-    from { filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.4)); }
-    to { filter: drop-shadow(0 0 40px rgba(251, 191, 36, 1)); }
-}
-
-@keyframes pulseBtn {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-}
-
-@keyframes fall {
-    to { transform: translateY(110vh) rotate(720deg); }
-}
-
-/* --- Tela de Início Temática e Radical --- */
-.setup-modal {
-    max-width: 650px; /* Bem mais larga e imponente */
-    background: linear-gradient(to bottom, #0f172a, #1e293b);
-    border: 3px solid var(--accent-primary);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(16, 185, 129, 0.1);
-    position: relative;
-    overflow: hidden;
-}
-
-/* Efeito sutil de "arranhão" no fundo */
-.setup-modal::before {
-    content: "";
-    position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 200px;
-    height: 200px;
-    background: repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 10px,
-        rgba(16, 185, 129, 0.05) 10px,
-        rgba(16, 185, 129, 0.05) 15px
-    );
-    transform: rotate(-20deg);
-    z-index: 0;
-    pointer-events: none;
-}
-
-.theme-header {
-    position: relative;
-    z-index: 1;
-}
-
-.claw-icon {
-    font-size: 60px;
-    display: block;
-    margin-bottom: 10px;
-    animation: roarShake 4s infinite; /* Pequeno tremor imitando um rugido */
-}
-
-.jurassic-title {
-    font-size: 28px;
-    line-height: 1.1;
-    color: var(--text-main);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 5px;
-}
-
-.jurassic-title span {
-    font-size: 64px;
-    font-weight: 900;
-    color: var(--accent-primary);
-    text-shadow: 4px 4px 0px #064e3b, 8px 8px 20px rgba(0,0,0,0.8);
-    letter-spacing: 5px;
-    display: inline-block;
-    transform: skewX(-8deg); /* Dá um visual veloz e agressivo */
-}
-
-.setup-subtitle {
-    color: var(--text-muted);
-    font-size: 16px;
-    font-weight: 800;
-    margin-bottom: 35px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    position: relative;
-    z-index: 1;
-}
-
-.setup-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    position: relative;
-    z-index: 1;
-}
-
-.player-inputs {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background: rgba(0,0,0,0.4);
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px dashed var(--border-subtle);
-}
-
-.player-inputs .input-group {
-    margin-bottom: 0;
-    flex: 1;
-}
-
-.player-inputs input {
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-    padding: 15px;
-    background: #0f172a;
-    border-color: var(--border-subtle);
-}
-
-.player-inputs input:focus {
-    border-color: var(--danger);
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
-}
-
-.vs-text {
-    font-size: 28px;
-    font-weight: 900;
-    color: var(--danger);
-    font-style: italic;
-    text-shadow: 0 4px 10px rgba(239, 68, 68, 0.5);
-}
-
-.settings-inputs {
-    display: flex;
-    gap: 20px;
-}
-
-.settings-inputs .input-group {
-    flex: 1;
-}
-
-/* O Botão Principal */
-.btn-start-radical {
-    margin-top: 30px;
-    background: var(--danger);
-    font-size: 22px;
-    padding: 20px;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    box-shadow: 0 6px 0 #991b1b, 0 15px 25px rgba(0,0,0,0.5); /* Efeito 3D */
-    border-radius: 12px;
-    position: relative;
-    z-index: 1;
-    transition: all 0.1s ease; /* Transição super rápida para clique seco */
-}
-
-.btn-start-radical:hover {
-    background: #dc2626;
-    transform: translateY(2px);
-    box-shadow: 0 4px 0 #991b1b, 0 10px 15px rgba(0,0,0,0.5);
-}
-
-.btn-start-radical:active {
-    transform: translateY(6px); /* Afunda o botão */
-    box-shadow: 0 0 0 #991b1b, 0 5px 10px rgba(0,0,0,0.5);
-}
-
-/* Animação do dinossauro no título */
-@keyframes roarShake {
-    0%, 100% { transform: scale(1) rotate(0deg); }
-    5% { transform: scale(1.1) rotate(-5deg); }
-    10% { transform: scale(1.1) rotate(5deg); }
-    15% { transform: scale(1.1) rotate(-5deg); }
-    20% { transform: scale(1) rotate(0deg); }
-}
-
-/* Responsividade para celular não quebrar a tela nova */
-@media (max-width: 650px) {
-    .player-inputs, .settings-inputs { flex-direction: column; }
-    .vs-text { margin: 10px 0; transform: rotate(90deg); }
-    .jurassic-title span { font-size: 48px; }
-}
-
-/* --- Animações de Interação (Nomes e Botão Iniciar) --- */
-
-/* Pulso ao digitar o nome */
-/* Pulso ao digitar o nome (Versão Mais Forte) */
-@keyframes typePulse {
-    0% { 
-        box-shadow: 0 0 0 transparent; 
-        transform: scale(1); 
-        background-color: #0f172a;
-    }
-    30% { 
-        box-shadow: 0 0 30px var(--danger), inset 0 0 15px var(--danger); 
-        transform: scale(1.20); 
-        background-color: #450a0a; /* Flash vermelho no fundo da caixa */
-        border-color: var(--danger);
-        color: #fff;
-    }
-    100% { 
-        box-shadow: 0 0 0 transparent; 
-        transform: scale(1); 
-        background-color: #0f172a;
-    }
-}
-
-.input-typing {
-    animation: typePulse 0.4s ease-out;
-    /* Adiciona uma transição extra para garantir que o texto não pisque errado */
-    transition: background-color 0.1s; 
-}
-
-/* Efeito de Terremoto (Passos do T-Rex) */
-@keyframes earthquake {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    10% { transform: translate(-5px, -5px) rotate(-1deg); }
-    20% { transform: translate(5px, 5px) rotate(1deg); }
-    30% { transform: translate(-5px, 5px) rotate(-1deg); }
-    40% { transform: translate(5px, -5px) rotate(1deg); }
-    50% { transform: translate(-5px, -5px) rotate(-1deg); }
-    60% { transform: translate(5px, 5px) rotate(1deg); }
-    70% { transform: translate(-5px, 5px) rotate(-1deg); }
-    80% { transform: translate(5px, -5px) rotate(1deg); }
-    90% { transform: translate(-5px, -5px) rotate(-1deg); }
-    100% { transform: translate(0, 0) rotate(0deg); }
-}
-
-.modal-earthquake {
-    animation: earthquake 0.5s ease-in-out infinite;
-    border-color: var(--danger) !important;
-    box-shadow: 0 0 80px rgba(239, 68, 68, 0.6) !important;
-}
-
-/* Tela de setup "sendo engolida" ou atacada */
-@keyframes dramaticExit {
-    to {
-        opacity: 0;
-        transform: scale(1.5) translateY(50px);
-        filter: blur(10px);
-    }
-}
-
-.setup-exit {
-    animation: dramaticExit 0.6s cubic-bezier(0.5, 0, 0.2, 1) forwards;
-}
-
-/* --- Barra de Progresso (Cabo de Guerra) --- */
+/* Cabo de Guerra (Progress Bar) */
 .tug-of-war-container {
     display: flex;
     align-items: center;
@@ -689,287 +242,297 @@ header h2 { margin: 0 0 10px 0; }
 }
 
 .bar-p1 {
-    height: 100%;
-    width: 50%;
+    height: 100%; width: 50%;
     background: linear-gradient(90deg, #2563eb, #3b82f6);
     box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); /* Animação elástica */
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .bar-p2 {
-    height: 100%;
-    width: 50%;
+    height: 100%; width: 50%;
     background: linear-gradient(-90deg, #dc2626, #ef4444);
     box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
     transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .vs-marker {
-    position: absolute;
-    left: 50%;
-    top: 50%;
+    position: absolute; left: 50%; top: 50%;
     transform: translate(-50%, -50%);
-    background: #0f172a;
-    color: #fff;
-    font-weight: 900;
-    font-style: italic;
-    padding: 4px 10px;
-    border-radius: 12px;
+    background: #0f172a; color: #fff;
+    font-weight: 900; font-style: italic;
+    padding: 4px 10px; border-radius: 12px;
     border: 2px solid var(--text-muted);
-    z-index: 10;
-    font-size: 14px;
-    letter-spacing: 1px;
+    z-index: 10; font-size: 14px; letter-spacing: 1px;
 }
 
-.score-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 60px;
-}
-
+.score-wrapper { display: flex; flex-direction: column; align-items: center; min-width: 60px; }
 .score-p1 { color: #60a5fa; font-size: 24px; font-weight: 900; }
 .score-p2 { color: #f87171; font-size: 24px; font-weight: 900; }
 .score-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
 
-/* --- Estilo dos Ícones dos Atributos --- */
-.stat-icon {
-    display: inline-block;
-    width: 20px;
-    text-align: center;
-    margin-right: 6px;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); /* Dá um leve efeito 3D no emoji */
-    font-size: 1.1em;
-}
-
-/* Garante que o nome do atributo fique alinhado com o ícone */
-.stat-name {
-    display: flex;
-    align-items: center;
-}
-
 /* =========================================
-   RESPONSIVIDADE GERAL (Media Queries)
+   6. SISTEMA DE CARTAS
    ========================================= */
-
-/* --- Tablets e Telas Médias (Até 768px) --- */
-@media (max-width: 768px) {
-    /* Muda o tabuleiro de lado-a-lado para empilhado (Cima/Baixo) */
-    .board {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    /* Ajusta a arena central para não ocupar espaço desnecessário */
-    .center-arena {
-        min-width: auto;
-        margin: 10px 0;
-        flex-direction: row; /* Coloca o VS e botões lado a lado se possível */
-        flex-wrap: wrap;
-    }
-
-    #vs-badge {
-        font-size: 24px;
-    }
-
-    /* Reduz levemente o tamanho das cartas */
-    .card-scene {
-        width: 250px;
-        height: 375px;
-    }
-
-    /* Ajusta a barra de progresso (Cabo de Guerra) */
-    .tug-of-war-container {
-        padding: 10px 15px;
-        gap: 10px;
-    }
-    
-    .score-p1, .score-p2 {
-        font-size: 20px;
-    }
+.card-scene {
+    width: 280px;
+    height: 420px;
+    perspective: 1000px; 
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    animation: cardEnter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    filter: drop-shadow(0px 15px 20px rgba(0, 0, 0, 0.6)); /* Sombra reforçada */
 }
+.card-scene.exit { animation: cardExit 0.4s ease forwards; }
 
-/* --- Celulares e Telas Pequenas (Até 480px) --- */
-@media (max-width: 480px) {
-    /* Alinha o body ao topo para evitar que o conteúdo suma em telas muito curtas */
-    body {
-        align-items: flex-start;
-        padding: 15px 0;
-    }
-
-    .screen {
-        padding: 10px;
-    }
-
-    /* Reduz paddings e margens do cabeçalho */
-    header {
-        padding: 15px;
-        margin-bottom: 20px;
-    }
-
-    header h2 {
-        font-size: 20px;
-    }
-
-    #game-status {
-        font-size: 16px;
-    }
-
-    /* Encolhe as cartas para caberem perfeitamente na tela do celular */
-    .card-scene {
-        width: 220px;
-        height: 330px;
-    }
-
-    /* Ajusta os textos de dentro da carta para não vazarem */
-    .card-front h4 {
-        font-size: 16px;
-        padding: 10px 5px;
-    }
-
-    .attributes li {
-        padding: 8px 15px;
-        font-size: 12px;
-    }
-
-    /* Ajusta os modais de setup e vitória */
-    .modal {
-        padding: 25px 15px;
-    }
-
-    .setup-modal {
-        border-width: 2px;
-    }
-
-    /* Remove o enfeite de fundo que pode causar scroll horizontal no celular */
-    .setup-modal::before {
-        display: none; 
-    }
-
-    .jurassic-title span {
-        font-size: 36px; /* Evita que o título quebre a tela */
-        letter-spacing: 2px;
-    }
-
-    .btn-start-radical {
-        font-size: 18px;
-        padding: 15px;
-    }
-    
-    .win-title {
-        font-size: 28px;
-    }
-}
-
-/* --- Telas muito baixas (Modo Paisagem no celular) --- */
-@media (max-height: 600px) {
-    body {
-        align-items: flex-start;
-    }
-    .card-scene {
-        transform: scale(0.85); /* Reduz tudo visualmente sem quebrar o layout */
-        transform-origin: top center;
-    }
-}
-
-/* =========================================
-   CHUVA DE DINOSSAUROS (Tela de Setup)
-   ========================================= */
-
-/* O contêiner da chuva fica fixo no fundo e atrás de tudo */
-#dino-rain-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none; /* Impede que os dinos atrapalhem o clique nos botões */
-    z-index: 0; /* Fica lá no fundo */
-    overflow: hidden;
-}
-
-/* Garante que a modal de setup fique na frente da chuva */
-.setup-modal {
+.card-inner {
+    width: 100%; height: 100%;
     position: relative;
-    z-index: 10; 
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d; 
 }
+.card-inner.flipped { transform: rotateY(180deg); }
 
-/* O estilo de cada dinossauro caindo */
-.dino-drop {
+.card-front, .card-back {
+    width: 100%; height: 100%;
     position: absolute;
-    top: -10%; /* Esconde o dino acima da tela antes de cair */
-    opacity: 0.4; /* Deixa meio transparente para não distrair muito */
-    /* Duas animações rodando juntas: cair e girar */
-    animation: fall linear infinite, spin linear infinite;
-    filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.5)); /* Brilho verde sutil */
+    backface-visibility: hidden; 
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Animação: Despencar de cima para baixo */
-@keyframes fall {
-    0% { top: -10%; }
-    100% { top: 110%; }
+.card-front {
+    transform: rotateY(180deg); 
+    background-color: var(--bg-card);
+    display: flex;
+    flex-direction: column;
 }
 
-/* Animação: Girar como um peão */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.card-back {
+    background-color: var(--bg-panel);
+    display: flex; justify-content: center; align-items: center;
+    background-image: radial-gradient(var(--border-subtle) 2px, transparent 2px);
+    background-size: 20px 20px;
 }
+.card-back::after {
+    content: "SUPER TRUNFO";
+    color: var(--accent-primary);
+    font-size: 28px; font-weight: 800;
+    text-align: center; transform: rotate(-45deg); display: block;
+    background-color: rgba(15, 23, 42, 0.8);
+    padding: 10px 20px; border-radius: 8px; border: 2px solid var(--accent-primary);
+}
+
+.card-front h4 { 
+    margin: 0; padding: 15px 10px; 
+    background-color: rgba(0,0,0,0.2); 
+    font-size: 20px; text-align: center; letter-spacing: 1px;
+}
+
+.card-front .img-container { 
+    height: 140px; 
+    background-color: var(--bg-main); 
+    border-bottom: 2px solid var(--accent-primary);
+    overflow: hidden; display: block; 
+}
+.card-front .img-container img { 
+    width: 100%; height: 100%; 
+    object-fit: cover; object-position: center; 
+    display: block; opacity: 0.9; transition: transform 0.3s ease; 
+}
+
+.card-front .type-badge { 
+    background-color: var(--accent-primary); color: var(--bg-main); 
+    font-size: 11px; text-align: center; padding: 4px; 
+    font-weight: 800; text-transform: uppercase; letter-spacing: 2px;
+}
+
+/* Atributos da Carta */
+.attributes { list-style: none; padding: 0; margin: 0; flex-grow: 1; display: flex; flex-direction: column; }
+.attributes li {
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex; justify-content: space-between;
+    font-size: 14px; font-weight: 600; color: var(--text-muted);
+}
+.attributes li span { color: var(--text-main); font-weight: 800;}
+.attributes li:last-child { border-bottom: none; }
+
+.card-inner.flipped .attributes li { cursor: pointer; transition: all 0.2s ease; }
+.card-inner.flipped .attributes li:hover { 
+    background-color: var(--border-subtle); color: #fff; padding-left: 25px; 
+}
+.card-inner.flipped .attributes li:hover span { color: var(--accent-primary); }
+
+.stat-icon {
+    display: inline-block; width: 20px; text-align: center;
+    margin-right: 6px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); font-size: 1.1em;
+}
+.stat-name { display: flex; align-items: center; }
 
 /* =========================================
-   DINOSSAURO SORRATEIRO (Emoji Giant Peek)
+   7. MODAIS
    ========================================= */
+.modal {
+    background-color: var(--bg-panel);
+    padding: 40px 30px; border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    text-align: center; max-width: 400px;
+    margin: 0 auto; border: 1px solid var(--border-subtle);
+}
+.modal h1 { margin-top: 0; color: var(--accent-primary); }
+.modal-earthquake {
+    animation: earthquake 0.5s ease-in-out infinite;
+    border-color: var(--danger) !important;
+    box-shadow: 0 0 80px rgba(239, 68, 68, 0.6) !important;
+}
 
-/* =========================================
-   DINOSSAURO SORRATEIRO (Aleatório)
-   ========================================= */
-
+/* Modal de Setup (Radical) */
 .setup-modal {
-    position: relative;
-    z-index: 10; 
+    max-width: 650px;
+    background: linear-gradient(to bottom, #0f172a, #1e293b);
+    border: 3px solid var(--accent-primary);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(16, 185, 129, 0.1);
+    position: relative; z-index: 10; overflow: hidden;
+}
+.setup-modal::before {
+    content: ""; position: absolute; top: -50px; right: -50px;
+    width: 200px; height: 200px;
+    background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(16, 185, 129, 0.05) 10px, rgba(16, 185, 129, 0.05) 15px);
+    transform: rotate(-20deg); z-index: 0; pointer-events: none;
+}
+.setup-exit { animation: dramaticExit 0.6s cubic-bezier(0.5, 0, 0.2, 1) forwards; }
+
+.theme-header { position: relative; z-index: 1; }
+.claw-icon { font-size: 60px; display: block; margin-bottom: 10px; animation: roarShake 4s infinite; }
+.jurassic-title { font-size: 28px; line-height: 1.1; color: var(--text-main); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
+.jurassic-title span {
+    font-size: 64px; font-weight: 900; color: var(--accent-primary);
+    text-shadow: 4px 4px 0px #064e3b, 8px 8px 20px rgba(0,0,0,0.8);
+    letter-spacing: 5px; display: inline-block; transform: skewX(-8deg);
+}
+.setup-subtitle { color: var(--text-muted); font-size: 16px; font-weight: 800; margin-bottom: 35px; text-transform: uppercase; letter-spacing: 2px; position: relative; z-index: 1; }
+
+.setup-grid { display: flex; flex-direction: column; gap: 25px; position: relative; z-index: 1; }
+.player-inputs { display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; border: 1px dashed var(--border-subtle); }
+.player-inputs .input-group { margin-bottom: 0; flex: 1; }
+.player-inputs input { text-align: center; font-size: 20px; font-weight: bold; padding: 15px; background: #0f172a; border-color: var(--border-subtle); }
+.player-inputs input:focus { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2); }
+.vs-text { font-size: 28px; font-weight: 900; color: var(--danger); font-style: italic; text-shadow: 0 4px 10px rgba(239, 68, 68, 0.5); }
+.settings-inputs { display: flex; gap: 20px; }
+.settings-inputs .input-group { flex: 1; }
+
+.btn-start-radical {
+    margin-top: 30px; background: var(--danger); font-size: 22px; padding: 20px;
+    text-transform: uppercase; letter-spacing: 3px;
+    box-shadow: 0 6px 0 #991b1b, 0 15px 25px rgba(0,0,0,0.5); border-radius: 12px;
+    position: relative; z-index: 1; transition: all 0.1s ease;
+}
+.btn-start-radical:hover { background: #dc2626; transform: translateY(2px); box-shadow: 0 4px 0 #991b1b, 0 10px 15px rgba(0,0,0,0.5); }
+.btn-start-radical:active { transform: translateY(6px); box-shadow: 0 0 0 #991b1b, 0 5px 10px rgba(0,0,0,0.5); }
+
+/* Modal de Vitória */
+.win-modal {
+    background: linear-gradient(135deg, var(--bg-panel), #0f172a);
+    border: 2px solid var(--accent-primary);
+    box-shadow: 0 0 50px rgba(16, 185, 129, 0.4);
+    transform: scale(0.8); opacity: 0;
+    animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+.trophy { font-size: 80px; margin-bottom: 10px; animation: floatTrophy 2s ease-in-out infinite, glowTrophy 1.5s alternate infinite; }
+.win-title { font-size: 36px; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 5px; text-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+.win-subtitle { color: var(--text-muted); margin-bottom: 30px; font-style: italic; }
+.btn-play-again { font-size: 18px; padding: 16px 32px; background: linear-gradient(45deg, var(--accent-primary), #059669); box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3); animation: pulseBtn 2s infinite; }
+
+/* =========================================
+   8. EFEITOS TEMÁTICOS EXTRAS
+   ========================================= */
+.confetti {
+    position: fixed; top: -20px; width: 10px; height: 10px;
+    z-index: 9999; pointer-events: none; animation: fall linear forwards;
+}
+
+#dino-rain-container {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none; z-index: 0; overflow: hidden;
+}
+.dino-drop {
+    position: absolute; top: -10%; opacity: 0.4;
+    animation: fall linear infinite, spin linear infinite;
+    filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.5));
 }
 
 .sneaky-dino-head {
-    position: fixed; 
-    font-size: clamp(12rem, 25vw, 25rem); /* Tamanho responsivo: gigante no PC, ajustado no celular */
-    z-index: 11; 
-    pointer-events: none; 
-    filter: drop-shadow(0 0 15px rgba(0,0,0,0.5));
-    
-    /* A transição suave de aparecer e sumir */
+    position: fixed; font-size: clamp(12rem, 25vw, 25rem);
+    z-index: 11; pointer-events: none; filter: drop-shadow(0 0 15px rgba(0,0,0,0.5));
     transition: transform 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1.5s ease;
     opacity: 0; 
 }
 
-/* Animação: Subir, encarar e sumir */
+/* =========================================
+   9. ANIMAÇÕES (@keyframes)
+   ========================================= */
+@keyframes cardEnter { to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes cardExit { to { opacity: 0; transform: scale(0.9) translateY(-20px); } }
+@keyframes floatCrown { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-5px) rotate(10deg); } }
+@keyframes popIn { to { transform: scale(1); opacity: 1; } }
+@keyframes floatTrophy { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-15px) scale(1.1); } }
+@keyframes glowTrophy { from { filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.4)); } to { filter: drop-shadow(0 0 40px rgba(251, 191, 36, 1)); } }
+@keyframes pulseBtn { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes fall { 0% { top: -10%; } 100% { top: 110%; transform: translateY(110vh) rotate(720deg); } } /* Mesclado chuva + confetes */
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes roarShake { 0%, 100% { transform: scale(1) rotate(0deg); } 5% { transform: scale(1.1) rotate(-5deg); } 10% { transform: scale(1.1) rotate(5deg); } 15% { transform: scale(1.1) rotate(-5deg); } 20% { transform: scale(1) rotate(0deg); } }
+@keyframes dramaticExit { to { opacity: 0; transform: scale(1.5) translateY(50px); filter: blur(10px); } }
 @keyframes sneakyPeak {
-    0% { 
-        /* Escondido abaixo da borda da tela */
-        transform: translateY(100px); 
-        opacity: 0; 
-    }
-    15% { 
-        /* Sobe aparecendo */
-        transform: translateY(0); 
-        opacity: 1; 
-    }
-    45% { 
-        /* Fica "encarando" sorrateiramente */
-        transform: translateY(0); 
-        opacity: 1; 
-    }
-    60% { 
-        /* Recua sorrateiramente */
-        transform: translateY(100px); 
-        opacity: 0; 
-    }
-    100% { 
-        transform: translateY(100px); 
-        opacity: 0; 
-    }
+    0%, 100% { transform: translateY(100px); opacity: 0; }
+    15%, 45% { transform: translateY(0); opacity: 1; }
+    60% { transform: translateY(100px); opacity: 0; }
+}
+@keyframes typePulse {
+    0%, 100% { box-shadow: 0 0 0 transparent; transform: scale(1); background-color: #0f172a; }
+    30% { box-shadow: 0 0 30px var(--danger), inset 0 0 15px var(--danger); transform: scale(1.20); background-color: #450a0a; border-color: var(--danger); color: #fff; }
+}
+@keyframes earthquake {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    10%, 30%, 50%, 70%, 90% { transform: translate(-5px, -5px) rotate(-1deg); }
+    20%, 60% { transform: translate(5px, 5px) rotate(1deg); }
+    40%, 80% { transform: translate(5px, -5px) rotate(1deg); }
 }
 
-/* Dica Bônus: Para a carta "saltar" mais nesse fundo escuro */
-.card-scene {
-    filter: drop-shadow(0px 15px 20px rgba(0, 0, 0, 0.6));
+/* =========================================
+   10. RESPONSIVIDADE (@media)
+   ========================================= */
+/* Tablets e Telas Médias */
+@media (max-width: 768px) {
+    .board { flex-direction: column; gap: 15px; }
+    .center-arena { min-width: auto; margin: 10px 0; flex-direction: row; flex-wrap: wrap; }
+    #vs-badge { font-size: 24px; }
+    .card-scene { width: 250px; height: 375px; }
+    .tug-of-war-container { padding: 10px 15px; gap: 10px; }
+    .score-p1, .score-p2 { font-size: 20px; }
+}
+
+/* Celulares e Telas Pequenas */
+@media (max-width: 480px) {
+    body { align-items: flex-start; padding: 15px 0; }
+    .screen { padding: 10px; }
+    header { padding: 15px; margin-bottom: 20px; }
+    header h2 { font-size: 20px; }
+    #game-status { font-size: 16px; }
+    .card-scene { width: 220px; height: 330px; }
+    .card-front h4 { font-size: 16px; padding: 10px 5px; }
+    .attributes li { padding: 8px 15px; font-size: 12px; }
+    .modal { padding: 25px 15px; }
+    .setup-modal { border-width: 2px; }
+    .setup-modal::before { display: none; }
+    .jurassic-title span { font-size: 36px; letter-spacing: 2px; }
+    .btn-start-radical { font-size: 18px; padding: 15px; }
+    .win-title { font-size: 28px; }
+}
+
+/* Modo Paisagem no Celular */
+@media (max-height: 600px) {
+    body { align-items: flex-start; }
+    .card-scene { transform: scale(0.85); transform-origin: top center; }
 }
