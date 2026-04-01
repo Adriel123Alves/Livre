@@ -164,7 +164,52 @@ header {
 header h2 { margin: 0 0 10px 0; }
 #game-status { color: var(--accent-primary); font-weight: 600; font-size: 18px; margin: 0;}
 
-.board { display: flex; justify-content: space-around; align-items: center; gap: 30px; flex-wrap: wrap; }
+/* Ajuste na Board para alinhar tudo em uma linha só */
+.board {
+    display: flex;
+    flex-direction: row; /* Força ficar um ao lado do outro */
+    justify-content: center;
+    align-items: center; /* Alinha o centro verticalmente */
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px; /* Aumentamos um pouco o limite da tela */
+    margin: 0 auto;
+    flex-wrap: nowrap; /* Impede que eles pulem para a linha de baixo */
+}
+
+/* Ajuste nos containers laterais */
+.large-image-container {
+    width: 200px;  /* Ajustamos o tamanho para caber tudo na tela */
+    height: 300px;
+    flex-shrink: 0; /* Impede que o retângulo seja esmagado */
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 2px solid var(--border-subtle);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+}
+
+.large-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Ajuste nas áreas dos jogadores para não ocuparem espaço demais */
+.player-area {
+    flex: 0 1 auto;
+    min-width: 280px;
+}
+
+/* Ajuste na arena central (VS e Botão) */
+.center-arena {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    min-width: 120px;
+}
 .player-area { text-align: center; }
 .player-area h3 { margin-bottom: 5px; color: var(--text-main); }
 .player-area p { margin-top: 0; color: var(--text-muted); font-size: 14px; }
@@ -639,4 +684,39 @@ header h2 { margin: 0 0 10px 0; }
     z-index: 20;
     pointer-events: none; /* Garante que não bloqueie cliques acidentais */
     transition: background-color 0.5s ease;
+}
+
+/* Container da imagem grande ao lado da carta */
+.large-image-container {
+    width: 240px;
+    height: 380px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 3px solid var(--border-subtle);
+    border-radius: 15px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    transition: all 0.4s ease;
+}
+
+/* Imagem dentro do container lateral */
+.large-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Faz a imagem preencher o retângulo sem distorcer */
+    opacity: 0.9;
+}
+
+/* Quando for a vez do jogador, o container brilha */
+.large-image-container.active-turn {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+    transform: scale(1.02);
+}
+
+/* Responsividade: Esconde em telas pequenas para não amontoar */
+@media (max-width: 1100px) {
+    .large-image-container { display: none; }
 }

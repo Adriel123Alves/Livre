@@ -183,19 +183,50 @@ function renderRound() {
 
     if (gameState.turn === 1) attachClickEvents(slotP1);
     if (gameState.turn === 2) attachClickEvents(slotP2);
+
+    // No final da função renderRound
+const displayP1 = document.getElementById('image-display-p1');
+    const displayP2 = document.getElementById('image-display-p2');
+
+    // LÓGICA JOGADOR 1
+    if (displayP1 && gameState.currentCardP1) {
+        // Se for a vez do P1, ele vê a foto dele. Se não for, fica escondido (opacidade 0 ou verso)
+        if (gameState.turn === 1) {
+            displayP1.innerHTML = `<img src="${gameState.currentCardP1.imagem}" alt="Dino">`;
+            displayP1.style.opacity = "1";
+            displayP1.classList.add('active-turn');
+        } else {
+            // Oponente (P2) não deve ver a foto do P1 ainda
+            displayP1.innerHTML = `<div class="card-back-pattern"></div>`; 
+            displayP1.style.opacity = "0.3";
+            displayP1.classList.remove('active-turn');
+        }
+    }
+
+    // LÓGICA JOGADOR 2
+    if (displayP2 && gameState.currentCardP2) {
+        // Se for a vez do P2, ele vê a foto dele.
+        if (gameState.turn === 2) {
+            displayP2.innerHTML = `<img src="${gameState.currentCardP2.imagem}" alt="Dino">`;
+            displayP2.style.opacity = "1";
+            displayP2.classList.add('active-turn');
+        } else {
+            // Oponente (P1) não deve ver a foto do P2 ainda
+            displayP2.innerHTML = `<div class="card-back-pattern"></div>`;
+            displayP2.style.opacity = "0.3";
+            displayP2.classList.remove('active-turn');
+        }
+    }
 }
 
 function createCardHTML(dino, isActive, playerId) {
-    const imgUrl = dino.imagem || 'https://via.placeholder.com/260x140?text=Sem+Imagem';
     const flippedClass = isActive ? 'flipped' : ''; 
-    
     return `
         <div class="card-scene">
             <div class="card-inner ${flippedClass}" id="inner-${playerId}">
                 <div class="card-back"></div>
                 <div class="card-front">
                     <h4>${dino.nome}</h4>
-                    <div class="img-container"><img src="${imgUrl}" alt="${dino.nome}"></div>
                     <div class="type-badge">${dino.tipo}</div>
                     <ul class="attributes">
                         <li data-attr="altura"><span class="stat-icon">📏</span> Altura <span>${dino.altura}m</span></li>
@@ -226,6 +257,10 @@ function resolveHand(attributeStr) {
 
     document.getElementById('inner-p1').classList.add('flipped');
     document.getElementById('inner-p2').classList.add('flipped');
+    document.getElementById('image-display-p1').innerHTML = `<img src="${gameState.currentCardP1.imagem}">`;
+    document.getElementById('image-display-p2').innerHTML = `<img src="${gameState.currentCardP2.imagem}">`;
+    document.getElementById('image-display-p1').style.opacity = "1";
+    document.getElementById('image-display-p2').style.opacity = "1";
 
     document.querySelectorAll(`[data-attr="${attributeStr}"]`).forEach(el => {
         el.style.backgroundColor = 'var(--accent-primary)';
