@@ -349,15 +349,71 @@ header h2 { margin: 0 0 10px 0; }
 }
 
 /* Atributos da Carta */
-.attributes { list-style: none; padding: 0; margin: 0; flex-grow: 1; display: flex; flex-direction: column; }
-.attributes li {
-    padding: 10px 20px;
-    border-bottom: 1px solid var(--border-subtle);
-    display: flex; justify-content: space-between;
-    font-size: 14px; font-weight: 600; color: var(--text-muted);
+.attributes { 
+    list-style: none; 
+    padding: 0; 
+    margin: 10px 10px 0; /* Adiciona margem externa para não encostar na borda da carta */
+    flex-grow: 1; 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px; /* Espaçamento entre os blocos arredondados */
 }
-.attributes li span { color: var(--text-main); font-weight: 800;}
-.attributes li:last-child { border-bottom: none; }
+
+.attributes li {
+    /* 1. Arredondamento e Fundo */
+    background-color: var(--bg-attribute-block); /* Adicione uma cor de fundo sutil se quiser destacar os blocos */
+    border: 1px solid var(--border-subtle); /* Opcional: borda sutil ao redor do bloco */
+    border-radius: 10px; /* BORDAS ARREDONDADAS NOS BLOCOS */
+    
+    /* 2. Centralização de Tudo */
+    display: flex; 
+    flex-direction: column; /* MUDANÇA PARA COLUNA: o valor fica abaixo do texto */
+    align-items: center; /* Centraliza horizontalmente */
+    justify-content: space-around; /* Espaça os elementos verticalmente */
+    
+    padding: 8px 5px; 
+    box-sizing: border-box; 
+    
+    /* 3. Estilo do Texto */
+    font-size: 11px; 
+    font-weight: 600; 
+    color: var(--text-muted);
+}
+
+/* Bloco principal (Altura) ocupa a largura toda */
+.attributes li:first-child {
+    grid-column: span 2;
+    padding: 10px 15px; 
+}
+
+/* Estilo para centralizar o Ícone e o Texto juntos no topo */
+.attributes li header {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 3px;
+    white-space: nowrap; /* Impede que o texto do atributo pule de linha */
+}
+
+/* O VALOR CENTRALIZADO E MAIOR */
+.attributes li span { 
+    color: var(--text-main); 
+    font-weight: 800;
+    font-size: 13px; /* Valor maior para destaque */
+    text-align: center; /* Garante que o texto dentro do span também esteja centralizado */
+    width: 100%; /* Ocupa a largura total para centralizar */
+    display: block; /* Essencial para o text-align: center funcionar em span */
+}
+
+/* Removemos a borda divisória antiga */
+.attributes li {
+    border-bottom: none; 
+}
+
+/* Aumenta o arredondamento geral da carta */
+.card {
+    border-radius: 20px;
+}
 
 .card-inner.flipped .attributes li { cursor: pointer; transition: all 0.2s ease; }
 .card-inner.flipped .attributes li:hover { 
