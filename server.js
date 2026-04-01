@@ -70,8 +70,8 @@ app.get('/dinos/random/:n', async (req, res) => {
     }
 });
 
-// Rota para buscar os N dinos mais famosos
-app.get('/dinos/famosos/:n', async (req, res) => {
+// Rota para buscar os N dinos mais top/fama
+app.get('/dinos/top/fama/:n', async (req, res) => {
     const { n } = req.params;
     
     // Converte o parâmetro da URL para número e garante que seja válido
@@ -90,11 +90,11 @@ app.get('/dinos/famosos/:n', async (req, res) => {
             return res.status(404).json({ error: 'Nenhum dino encontrado no banco de dados.' });
         }
         
-        // Retorna o array completo com os dinos mais famosos
+        // Retorna o array completo com os dinos mais top/fama
         res.json(result.rows);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ error: 'Erro interno ao buscar os dinos mais famosos.' });
+        res.status(500).json({ error: 'Erro interno ao buscar os dinos mais top/fama.' });
     }
 });
 
