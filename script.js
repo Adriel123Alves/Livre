@@ -241,53 +241,64 @@ function resolveHand(attributeStr) {
     const card2 = gameState.p2.deck.shift();
 
     setTimeout(() => {
-        if (val1 > val2) {
-            statusEl.innerText = `${gameState.p1.name} Venceu a Mão! (${val1} > ${val2})`;
-            statusEl.style.color = "var(--accent-primary)";
-            gameState.p1.deck.push(card1, card2, ...gameState.pool);
-            gameState.pool = [];
-            gameState.turn = 1;
-        } 
-        else if (val2 > val1) {
-            statusEl.innerText = `${gameState.p2.name} Venceu a Mão! (${val2} > ${val1})`;
-            statusEl.style.color = "var(--accent-primary)";
-            gameState.p2.deck.push(card1, card2, ...gameState.pool);
-            gameState.pool = [];
-            gameState.turn = 2;
-        } 
-        else {
-            statusEl.innerText = `Empate! As cartas vão para a mesa. (${val1} = ${val2})`;
-            statusEl.style.color = "#fbbf24"; 
-            gameState.pool.push(card1, card2);
-        }
+            // 1. MUDANÇA AQUI: Selecionamos a classe .card-front em vez da .card-scene
+            const frontP1 = document.querySelector('#card-p1 .card-front');
+            const frontP2 = document.querySelector('#card-p2 .card-front');
 
-        const vsBadge = document.getElementById('vs-badge');
-        if (vsBadge) {
-            vsBadge.style.display = 'none';
-        }
+            if (val1 > val2) {
+                statusEl.innerText = `${gameState.p1.name} Venceu a Mão! (${val1} > ${val2})`;
+                statusEl.style.color = "var(--accent-primary)";
+                gameState.p1.deck.push(card1, card2, ...gameState.pool);
+                gameState.pool = [];
+                gameState.turn = 1;
+                
+                // Aplica nas frentes das cartas
+                frontP1.classList.add('mega-winner-pulse');
+                frontP2.classList.add('loser-darken');
+            } 
+            else if (val2 > val1) {
+                statusEl.innerText = `${gameState.p2.name} Venceu a Mão! (${val2} > ${val1})`;
+                statusEl.style.color = "var(--accent-primary)";
+                gameState.p2.deck.push(card1, card2, ...gameState.pool);
+                gameState.pool = [];
+                gameState.turn = 2;
 
-        const nextBtn = document.getElementById('btn-next-turn');
-        if (nextBtn) {
-            nextBtn.classList.remove('hidden'); 
-            nextBtn.classList.add('show');
-            
-            // Nova lógica de transição suave
-            nextBtn.onclick = () => {
-                // 1. Esconde o botão imediatamente
-                nextBtn.classList.remove('show'); 
-                
-                // 2. Adiciona a classe 'exit' nas cartas atuais para elas sumirem
-                document.querySelectorAll('.card-scene').forEach(card => {
-                    card.classList.add('exit');
-                });
-                
-                // 3. Espera 400ms (o tempo da animação acabar) e só então renderiza a nova rodada
-                setTimeout(() => {
-                    renderRound();
-                }, 400); 
-            };
-        }
-    }, 600); // <--- O QUE FALTAVA: Fechamento do setTimeout e tempo de 600ms
+                // Aplica nas frentes das cartas
+                frontP2.classList.add('mega-winner-pulse');
+                frontP1.classList.add('loser-darken');
+            } 
+            else {
+                statusEl.innerText = `Empate! As cartas vão para a mesa. (${val1} = ${val2})`;
+                statusEl.style.color = "#fbbf24"; 
+                gameState.pool.push(card1, card2);
+
+                frontP1.style.boxShadow = "0 0 20px 5px #fbbf24";
+                frontP2.style.boxShadow = "0 0 20px 5px #fbbf24";
+            }
+
+            const vsBadge = document.getElementById('vs-badge');
+            if (vsBadge) {
+                vsBadge.style.display = 'none';
+            }
+
+            const nextBtn = document.getElementById('btn-next-turn');
+            if (nextBtn) {
+                nextBtn.classList.remove('hidden'); 
+                nextBtn.classList.add('show');
+                
+                nextBtn.onclick = () => {
+                    nextBtn.classList.remove('show'); 
+                    
+                    document.querySelectorAll('.card-scene').forEach(card => {
+                        card.classList.add('exit');
+                    });
+                    
+                    setTimeout(() => {
+                        renderRound();
+                    }, 400); 
+                };
+            }
+        }, 600); // <--- O QUE FALTAVA: Fechamento do setTimeout e tempo de 600ms
 } // <--- O QUE FALTAVA: Fechamento da função resolveHand
 
 // Agora sim a função endGame fica separadinha e correta

@@ -592,3 +592,51 @@ header h2 { margin: 0 0 10px 0; }
     body { align-items: flex-start; }
     .card-scene { transform: scale(0.85); transform-origin: top center; }
 }
+
+/* Animação Épica de Pulso - SEM quebrar o 3D e SEM Blur */
+@keyframes mega-pulse {
+    0% {
+        scale: 1; 
+        box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.8);
+    }
+    50% {
+        scale: 1.05; 
+        box-shadow: 0 0 40px 15px rgba(46, 204, 113, 0.8);
+    }
+    100% {
+        scale: 1;
+        box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+    }
+}
+
+.mega-winner-pulse {
+    /* --- AS DUAS LINHAS MÁGICAS PARA TIRAR O BLUR --- */
+    
+    /* 1. Para imagens pixel art ficarem nítidas */
+    image-rendering: pixelated; 
+    
+    /* 2. Para forçar a aceleração da GPU e renderização de pixel inteiro */
+    will-change: transform; 
+    
+    /* ----------------------------------------------- */
+
+    animation: mega-pulse 1s ease-in-out infinite;
+    border: 2px solid #2ecc71 !important;
+    z-index: 10;
+}
+
+/* Criamos uma "sombra" por cima da carta perdedora em vez de usar filter */
+.loser-darken {
+    position: relative; 
+}
+
+.loser-darken::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7); /* Película escura transparente */
+    border-radius: inherit; /* Respeita as bordas arredondadas da sua carta */
+    z-index: 20;
+    pointer-events: none; /* Garante que não bloqueie cliques acidentais */
+    transition: background-color 0.5s ease;
+}
